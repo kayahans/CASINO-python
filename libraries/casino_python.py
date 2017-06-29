@@ -34,11 +34,11 @@ class Settings(object):
         if not os.path.exists(self.pspdir):
             error("pspdir:(" +self.pspdir+ ") does not exist")
 
-        if not os.path.exists(self.pspcutoffs):
-            if isinstance(self.pspcutoffs, int):
-                pass
-            else:
-                error("pspcutoffs file does not exist")
+        if not isinstance(self.pspcutoffs, int):
+            if not os.path.exists(self.pspcutoffs):
+                self.pspcutoffs = self.pspdir + '/' + self.pspname + '/' + self.pspcutoffs
+                if not os.path.exists(self.pspcutoffs):
+                    error("pspcutoffs file does not exist")
         else:
             psp_dict = []
             with open(self.pspcutoffs, 'r') as inf:

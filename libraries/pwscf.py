@@ -2,6 +2,7 @@ import sys,os,copy
 from collections import OrderedDict
 from units import atomic_weight
 import fnmatch
+from casino_python import settings
 from error_handler import error, warning
 
 default_input_control = OrderedDict(
@@ -123,15 +124,14 @@ class Pwscf:
             natoms = len(structure.species)
 
             awp = []
-
             for specie in unique_atoms:  # Check here later
-
                 if not os.listdir(system.runpspdir) == []:
                     for file in os.listdir(system.runpspdir):
+
                         if fnmatch.fnmatch(file, specie + '*'):
                             awp.append([str(specie), atomic_weight(specie), file])
                         else:
-                            awp.append([str(specie), atomic_weight(specie), specie + ".<FIX_ME>.upf"])
+                            awp.append([str(specie), atomic_weight(specie), specie + "." + settings.pspname + ".upf"])
                 else:
                     awp.append([str(specie), atomic_weight(specie), specie + ".<FIX_ME>.upf"])
 
