@@ -22,14 +22,17 @@ class Settings(object):
     """Settings here"""
 
     def __call__(self, **kwargs):
+
         for key,value in kwargs.iteritems():
             setattr(self,key,value)
 
+        self.rootdir = os.path.abspath(self.rootdir)
+        self.pspdir = os.path.abspath(self.pspdir)
         if not os.path.exists(self.rootdir):
             error("rootdir does not exist")
 
         if not os.path.exists(self.pspdir):
-            error("pspdir does not exist")
+            error("pspdir:(" +self.pspdir+ ") does not exist")
 
         if not os.path.exists(self.pspcutoffs):
             if isinstance(self.pspcutoffs, int):
