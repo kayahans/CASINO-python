@@ -9,7 +9,7 @@ settings(rootdir="./",
          pspcutoffs="psp.txt",
          #pspcutoffs=280
          machinename="cruller",
-         )
+             )
 
 generic = System(
         name="CoO2",

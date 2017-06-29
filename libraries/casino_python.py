@@ -39,12 +39,16 @@ class Settings(object):
                 self.pspcutoffs = self.pspdir + '/' + self.pspname + '/' + self.pspcutoffs
                 if not os.path.exists(self.pspcutoffs):
                     error("pspcutoffs file does not exist")
-        else:
-            psp_dict = []
-            with open(self.pspcutoffs, 'r') as inf:
-                for line in inf:
-                    psp_dict.append(eval(line))
-            self.psp_dict = psp_dict
+
+                psp_dict = dict()
+
+                with open(self.pspcutoffs, 'r') as inf:
+                    for line in inf:
+                        (key, val) = line.split()
+                        psp_dict[str(key)] = int(val)
+                self.psp_dict = psp_dict
+                inf.close()
+
 
 
         if not socket.gethostname() == self.machinename:

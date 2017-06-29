@@ -6,7 +6,7 @@ title                          = 'generic.qe'
 /
 &SYSTEM
 nspin                          = 2 
-ecutwfc                        = 'None' 
+ecutwfc                        = 280 
 input_dft                      = 'lda' 
 nosym_evc                      = 'True' 
 noinv                          = 'True' 
@@ -30,8 +30,6 @@ startingwfc                    = 'random'
 ATOMIC_SPECIES
 Ni     58.6934000000    Ni.OPT.upf     
 Ni     58.6934000000    Ni.OPT.upf     
-Ni     58.6934000000    Ni.OPT.upf     
-O      15.9994000000    O.OPT.upf      
 O      15.9994000000    O.OPT.upf      
 O      15.9994000000    O.OPT.upf      
 /

@@ -80,6 +80,7 @@ class Pwscf:
     #self.k_point_lattice = gen_k_points_by_density(k_point_density)
 
     def process_pwscf_inputs(self):
+
         self.input_control = dict()
         self.input_system= dict()
         self.input_electrons= dict()
@@ -117,15 +118,14 @@ class Pwscf:
     def process_system_inputs(self):
 
         system = self.system
-
-
-
         for str_num, structure in system.structures.iteritems():
 
             unique_atoms = set(structure.species)
             natoms = len(structure.species)
 
             awp = []
+            max_ecut = -1
+
             for specie in unique_atoms:  # Check here later
                 if not os.listdir(system.runpspdir) == []:
                     for file in os.listdir(system.runpspdir):
@@ -141,7 +141,8 @@ class Pwscf:
                     os.symlink(
                         settings.pspdir + '/' + settings.pspname + '/' + specie + '/' + specie + '.' + settings.pspname + '.upf',
                         system.runpspdir + '/' + specie + '.' + settings.pspname + '.upf')
-
+                if settings.psp_dict[specie] > max_ecut:
+                    max_ecut=settings.psp_dict[specie]
 
             atom_coords = []
             for i, atom in enumerate(structure.species):
@@ -151,7 +152,8 @@ class Pwscf:
                                         cart_coords = atom_coords,
                                         pseudo_dir = system.runpspdir,
                                         num_kpoints = len(structure.kgrid),
-                                        kgrid = copy.deepcopy(structure.kgrid))
+                                        kgrid = copy.deepcopy(structure.kgrid),
+                                        ecutwfc=copy.copy(max_ecut))
 
     def transition_metal(self):
         t_metals = set(['Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', \

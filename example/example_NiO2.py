@@ -6,7 +6,7 @@ from analyze_results import results
 settings(rootdir="./",
          pspdir="./Psps",
          pspname="OPT",
-         pspcutoffs="/Users/kayahan/Desktop/psp.txt",
+         pspcutoffs="./psp.txt",
          machinename="cruller",
          )
 
