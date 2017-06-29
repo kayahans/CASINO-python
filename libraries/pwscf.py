@@ -118,6 +118,8 @@ class Pwscf:
 
         system = self.system
 
+
+
         for str_num, structure in system.structures.iteritems():
 
             unique_atoms = set(structure.species)
@@ -133,7 +135,12 @@ class Pwscf:
                         else:
                             awp.append([str(specie), atomic_weight(specie), specie + "." + settings.pspname + ".upf"])
                 else:
-                    awp.append([str(specie), atomic_weight(specie), specie + ".<FIX_ME>.upf"])
+                    awp.append([str(specie), atomic_weight(specie), specie + "." + settings.pspname + ".upf"])
+
+                if not os.path.exists(system.runpspdir + '/' + specie + '.' + settings.pspname + '.upf'):
+                    os.symlink(
+                        settings.pspdir + '/' + settings.pspname + '/' + specie + '/' + specie + '.' + settings.pspname + '.upf',
+                        system.runpspdir + '/' + specie + '.' + settings.pspname + '.upf')
 
 
             atom_coords = []

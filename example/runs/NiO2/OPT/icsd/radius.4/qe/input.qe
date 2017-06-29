@@ -28,8 +28,12 @@ startingwfc                    = 'random'
 -3.2680774749    0.0000000000     4.5253056414   
 /
 ATOMIC_SPECIES
-Ni     58.6934000000    Ni.<FIX_ME>.upf
-O      15.9994000000    O.<FIX_ME>.upf 
+Ni     58.6934000000    Ni.OPT.upf     
+Ni     58.6934000000    Ni.OPT.upf     
+Ni     58.6934000000    Ni.OPT.upf     
+O      15.9994000000    O.OPT.upf      
+O      15.9994000000    O.OPT.upf      
+O      15.9994000000    O.OPT.upf      
 /
 ATOMIC_POSITIONS angstrom
 Ni   0.0000000000     0.0000000000     0.0000000000   
