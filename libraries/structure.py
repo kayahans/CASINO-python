@@ -1,5 +1,10 @@
 import numpy as np
 from error_handler import error, warning
+import vasp
+import os,re
+import subprocess
+import copy
+
 class Structure:
 
     def __init__(self, lattice=None, species=None, coords=None):
@@ -22,20 +27,19 @@ class Structure:
             print "No coords in Structure"
         else:
             self.coords = coords
-            self.kgrid = self.gen_kpts_lattice([1,1,1])
-
+            #self.kgrid = self.gen_real_kpts_lattice([1,1,1])
+            self.kgrid = self.gen_complex_kpts_lattice([1,1,1])
+            print self.kgrid
 
         if len(species) != len(coords):
             print "Number of species is not equal to number of coordinates"
         elif len(lattice) != 3:
             print "Structure is not a 3D lattice"
         else:
-            assert isinstance(lattice, list)
-            print ""
-            assert isinstance(species, list)
-            print ""
-            assert isinstance(coords, list)
-            print ""
+            assert isinstance(lattice, list), error("")
+            assert isinstance(species, list),error("")
+            assert isinstance(coords, list),error("")
+
 
     @staticmethod
     def rec_lattice_pts_in_scell(scell_matrix=None):
@@ -199,9 +203,53 @@ class Structure:
             result.update({"radius." + str(abs(sa * sb * sc)): b_keep.tolist()})
         return result
 
-    def gen_kpts_lattice(self,scell_matrix):
+    def gen_real_kpts_lattice(self,scell_matrix):
         """Generates gamma centered reciprocal lattice on real lattice for DMC calculations with scell_matrix
         Currently works successfully with diagonal lattices, but non-diagonal lattices must be tested to make sure"""
+
+        if isinstance(scell_matrix,list):
+            scell_matrix=np.array(scell_matrix)
+        else:
+            assert isinstance(scell_matrix, np.ndarray)
+            print "Wrong scell format in make_scell"
+
+        if scell_matrix.size == 3:
+            scell_matrix = np.array(((scell_matrix[0], 0, 0), (0, scell_matrix[1], 0), (0, 0, scell_matrix[2])))
+        elif scell_matrix.size == 9:
+            scell_matrix = np.array(scell_matrix)
+        else:
+            print "Invalid scell matrix array size"
+
+        #Reciprocal lattice points inside the Brillouin zone for supercell lattice vectors
+        rec_lattice_pts = np.array(self.rec_lattice_pts_in_scell(scell_matrix))
+
+        #Real grid for [1,1,1] unit cell
+        unitcell_k_grid = np.array([[0.,0.,0.],[0.5,0.,0.],[0.,0.5,0.],[0.,0.,0.5],[0.5,0.5,0.],[0.5,0.,0.5],[0.,0.5,0.5],[0.5,0.5,0.5]])
+        unitcell_k_weights = np.array([[0.125],[0.125],[0.125],[0.125],[0.125],[0.125],[0.125],[0.125]])
+
+        #Scale the grid for supercells
+        scaled_unitcell_k_grid = (np.dot(unitcell_k_grid, np.linalg.inv(scell_matrix)))
+        scell_size = np.linalg.det(scell_matrix)
+        scaled_unitcell_k_weights = unitcell_k_weights/scell_size
+
+        rec_grid = []
+        rec_weights =[]
+
+        for rec_lat_pt in rec_lattice_pts:
+
+            lattice_origin = np.array([0, 0, 0], dtype=float)
+
+            if np.array_equal(rec_lat_pt, lattice_origin):
+                rec_grid = scaled_unitcell_k_grid
+                rec_weights = scaled_unitcell_k_weights
+            else:
+                rec_grid = np.vstack((rec_grid, rec_lat_pt + scaled_unitcell_k_grid))
+                rec_weights = np.vstack((rec_weights, scaled_unitcell_k_weights))
+
+        return np.hstack((rec_grid,rec_weights))
+
+    def gen_complex_kpts_lattice(self,scell_matrix):
+        """Lattice based on monkhorst-pack kgrid"""
 
 
         if isinstance(scell_matrix,list):
@@ -220,24 +268,66 @@ class Structure:
         #Reciprocal lattice points inside the Brillouin zone for supercell lattice vectors
         rec_lattice_pts = np.array(self.rec_lattice_pts_in_scell(scell_matrix))
         #Real grid for [1,1,1] unit cell
-        unit_grid = [[0.,0.,0.],[0.5,0.,0.],[0.,0.5,0.],[0.,0.,0.5],[0.5,0.5,0.],[0.5,0.,0.5],[0.,0.5,0.5],[0.5,0.5,0.5]]
+
+        a=vasp.Vasp(struct=self)
+
+        vasp.Vasp.write_poscar(a)
+        f = open('PRECALC', 'w')
+        f.write("MINDISTANCE=16\n")
+        f.write("INCLUDEGAMMA=AUTO\n")
+
+        f.close()
+
+        process = subprocess.Popen(
+            "curl -s 'http://muellergroup.jhu.edu:8080/PreCalcServer/PreCalcServlet?format=vasp&messagelist=TRUE&clientversion=C2016.06.06' --form fileupload=@PRECALC --form fileupload=@POSCAR",
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        print out
+
+        match = False
+        unitcell_k_grid = np.array([-1,-1,-1], dtype=float)
+        unitcell_k_weights = np.array([-1], dtype=float)
+
+        for line in out.split(os.linesep):
+            if re.match('Fractional', line):
+                match = True
+            elif re.match('Tetrahedra', line):
+                match = False
+            elif match:
+                line = line.split()
+
+
+                if np.array_equal(unitcell_k_grid, np.array([-1,-1,-1])):
+
+                    unitcell_k_grid = np.array([float(line[0]), float(line[1]), float(line[2])])
+                else:
+                    unitcell_k_grid=np.vstack([unitcell_k_grid, np.array([float(line[0]), float(line[1]), float(line[2])])])
+
+
+                if np.array_equal(unitcell_k_weights, np.array([-1])):
+                    unitcell_k_weights=np.array([float(line[3])])
+                else:
+                    unitcell_k_weights = np.vstack([unitcell_k_weights, np.array([float(line[3])])])
+
+
         #Scale the grid for supercells
-        grid_vec = (np.dot(unit_grid, np.linalg.inv(scell_matrix)))
+        unitcell_k_weights = unitcell_k_weights / unitcell_k_weights.sum()
+        scaled_unitcell_k_grid = (np.dot(unitcell_k_grid, np.linalg.inv(scell_matrix)))
+        scell_size = np.linalg.det(scell_matrix)
+        scaled_unitcell_k_weights = unitcell_k_weights/scell_size
 
         rec_grid = []
+        rec_weights =[]
 
         for rec_lat_pt in rec_lattice_pts:
 
             lattice_origin = np.array([0, 0, 0], dtype=float)
 
             if np.array_equal(rec_lat_pt, lattice_origin):
-                rec_grid = grid_vec
+                rec_grid = scaled_unitcell_k_grid
+                rec_weights = scaled_unitcell_k_weights
             else:
-                rec_grid = np.append(rec_grid, rec_lat_pt + grid_vec, axis=0)
+                rec_grid = np.vstack((rec_grid, rec_lat_pt + scaled_unitcell_k_grid))
+                rec_weights = np.vstack((rec_weights, scaled_unitcell_k_weights))
 
-        return rec_grid
-
-
-
-
-
+        return np.hstack((rec_grid,rec_weights))

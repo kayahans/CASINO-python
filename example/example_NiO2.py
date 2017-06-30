@@ -2,7 +2,14 @@
 from casino_python import settings,System
 from pwscf import generate_pwscf
 from analyze_results import results
-
+from vasp import  Vasp
+import os
+import subprocess
+import re
+import numpy as np
+import structure
+k=Vasp()
+print k
 settings(rootdir="./",
          pspdir="./Psps",
          pspname="OPT",
@@ -14,13 +21,14 @@ generic = System(
         name="NiO2",
         structdir="./Structs",
         source="icsd",
-        supercells=[1,2,3,4],
+        supercells=[1],
         folded=True,
     )
+
+
 
 sims = []
 scf = generate_pwscf(
         system=generic,
         input_dft='lda'
 )
-

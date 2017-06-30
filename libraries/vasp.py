@@ -1,12 +1,12 @@
-from structure import Structure
+import structure
 import numpy as np
 import os,sys
 import copy
 from error_handler import error, warning
 
-class Vasp(Structure):
+class Vasp:
 
-    def __init__(self, comment=None, scale=None, structure=None, iscartesian=True):
+    def __init__(self, comment=None, scale=None, struct=None, iscartesian=True):
 
         if comment is None:
             self.comment = "Default VASP inp_str"
@@ -18,13 +18,11 @@ class Vasp(Structure):
         else:
             self.scale = scale
 
-        if structure is None:
-            self.structure = Structure()
-        else:
-            self.structure = structure
+        assert isinstance(struct, structure.Structure), error("structure type is incorrect")
 
+        self.structure = struct
         self.iscartesian = iscartesian
-        assert isinstance(structure, Structure), self.error("structure type is incorrect")
+
 
 
 
@@ -84,27 +82,28 @@ Cartesian
         for i in range(8,len(lines)):
             coords += [[float(x) for x in lines[i].split()]]
 
-        return Vasp(comment=comment, scale=scale, structure=Structure(lattice=lattice, species=species, coords=coords), iscartesian=iscartesian)
+        return Vasp(comment=comment, scale=scale, struct=structure.Structure(lattice=lattice, species=species, coords=coords), iscartesian=iscartesian)
 
     @staticmethod
     def write_poscar(inp_str, outfile='POSCAR'):
         """Writes POSCAR file from Structure or VASP object"""
 
         out_str = []
-        assert isinstance(inp_str, Structure) or isinstance(inp_str,Vasp), "'write_poscar' function input must be of type 'Structure' or 'Vasp'"
+        assert isinstance(inp_str, structure.Structure) or isinstance(inp_str,Vasp), "'write_poscar' function input must be of type 'Structure' or 'Vasp'"
 
         # Look for VASP object first, since it is superclass
         if isinstance(inp_str, Vasp):
             out_str = copy.deepcopy(inp_str)
-        elif isinstance(inp_str,Structure):
-            out_str = Vasp(comment='Default VASP POSCAR', scale='1.0', structure=Structure(lattice=inp_str.lattice, coords=inp_str.coords, species=inp_str.species), iscartesian=True)
+        elif isinstance(inp_str,structure.Structure):
+            print "kayu"
+            out_str = Vasp(comment='Default VASP POSCAR', scale='1.0', struct=structure.Structure(lattice=inp_str.lattice, coords=inp_str.coords, species=inp_str.species), iscartesian=True)
 
 
         dir = os.getcwd()
         filename = dir + '/' + outfile
         with open(filename, 'w') as f:
             f.write(out_str.comment + '\n')
-            f.write(out_str.scale+ '\n')
+            f.write(str(out_str.scale)+ '\n')
             for row in out_str.structure.lattice:
                 f.write('{0:15}  {1:15}  {2:15}'.format(str(format(row[0], '.10f')), str(format(row[1], '.10f')),
                                                         str(format(row[2], '.10f'))) + '\n')

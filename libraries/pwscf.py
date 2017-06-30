@@ -2,6 +2,7 @@ import sys,os,copy
 from collections import OrderedDict
 from units import atomic_weight
 import fnmatch
+import numpy as np
 from casino_python import settings
 from error_handler import error, warning
 
@@ -65,6 +66,8 @@ class Pwscf:
             sys.exit()
 
         self.system = system
+        print dir(self.system.structures["radius.1"])
+        print self.system.structures["radius.1"].kgrid
         self.kwargs = dict()
 
         for scell_num, str in system.scells.iteritems():
@@ -284,10 +287,11 @@ class Pwscf:
                         pass
                     elif key is 'kgrid':
                         a=len(value)
-                        kgrid_weights = 1.0 / len(value)
 
-                        for row in value:
-                            f.write('{0:15} {1:15} {2:15} {3:15}'.format(str(format(row[0], '.10f')), str(format(row[1], '.10f')), str(format(row[2], '.10f')), str(format(kgrid_weights, '.10f'))) + '\n')
+                        f.write('\n'.join(' '.join(format(cell,'.10f') for cell in row) for row in value))
+
+                        #for row in value:
+                            #f.write('{0:15} {1:15} {2:15} {3:15}'.format(str(format(row[0], '.10f')), str(format(row[1], '.10f')), str(format(row[2], '.10f')), str(format(kgrid_weights, '.10f'))) + '\n')
                     else:
                         if isinstance(value, int) or isinstance(value, float):
                             f.write( "{0:30} = {1} \n".format(str(key), str(value)) )

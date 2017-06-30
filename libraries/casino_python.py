@@ -88,7 +88,7 @@ class System():
                         self.structures.update({key : unit_cell.make_scell(value)})
                 else:
                     for key, value in self.scells.iteritems():
-                        unit_cell.kgrid = copy.deepcopy(unit_cell.gen_kpts_lattice(value))
+                        unit_cell.kgrid = copy.deepcopy(unit_cell.gen_real_kpts_lattice(value))
                         self.structures.update({key : copy.deepcopy(unit_cell)})
 
 
