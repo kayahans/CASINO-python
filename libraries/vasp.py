@@ -30,7 +30,7 @@ class Vasp:
     def read_poscar(filename):
         """
 Reads VASP POSCAR files, and returns VASP object, currently only cartesian coordinates are supported
-Input VASP file must be in the following format:
+Input VASP file must be in the following format, whitespaces are not important:
 Ni1 O2
 1.0
         4.8754000664         0.0000000000         0.0000000000
@@ -95,7 +95,6 @@ Cartesian
         if isinstance(inp_str, Vasp):
             out_str = copy.deepcopy(inp_str)
         elif isinstance(inp_str,structure.Structure):
-            print "kayu"
             out_str = Vasp(comment='Default VASP POSCAR', scale='1.0', struct=structure.Structure(lattice=inp_str.lattice, coords=inp_str.coords, species=inp_str.species), iscartesian=True)
 
 
@@ -108,13 +107,13 @@ Cartesian
                 f.write('{0:15}  {1:15}  {2:15}'.format(str(format(row[0], '.10f')), str(format(row[1], '.10f')),
                                                         str(format(row[2], '.10f'))) + '\n')
 
-            unique_el = set(out_str.structure.species)
+            unique_elements = set(out_str.structure.species)
 
-            f.write('\t'+ '\t'.join(unique_el)+ '\n')
+            f.write('\t'+ '\t'.join(unique_elements)+ '\n')
 
-            el_num = [0] * len(unique_el)
+            el_num = [0] * len(unique_elements)
 
-            for i, element in enumerate(unique_el):
+            for i, element in enumerate(unique_elements):
                 el_num[i]=out_str.structure.species.count(element)
 
             f.write('\t'+ '\t'.join(str(x) for x in el_num) + '\n')

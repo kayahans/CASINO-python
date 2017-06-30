@@ -6,6 +6,7 @@ import fnmatch
 import copy
 from vasp import Vasp
 from error_handler import error,warning
+import structure
 
 # Default settings
 settings_list = dict(rootdir="./",
@@ -61,10 +62,11 @@ settings = Settings()
 
 class System():
     """ Input file locations """
-    def __init__(self, name=None, source=None, supercells=None, structdir=None, folded = True):
+    def __init__(self, name=None, source=None, supercells=None, structdir=None, folded = True, real_or_complex='Real',mindistance=16):
 
-        assert isinstance(name, str), Settings.error("System settings are wrong")
-        assert isinstance(source, str), Settings.error("System settings are wrong")
+        #print real_or_complex
+        assert isinstance(name, str), error("System settings are wrong")
+        assert isinstance(source, str), error("System settings are wrong")
 
         self.structdir = os.path.abspath(structdir + "/" + name + "/" + source + "/")
 
@@ -79,6 +81,17 @@ class System():
             if vaspInput is True:
                 unit_cell = Vasp.read_poscar(self.inputfile)
                 unit_cell = unit_cell.structure
+
+                #Transfer variables from System to structure
+                setattr(unit_cell,'real_or_complex',real_or_complex)
+                setattr(unit_cell, 'mindistance', mindistance)
+
+                assert isinstance(unit_cell, structure.Structure)
+                if real_or_complex == 'Real':
+                    unit_cell.kgrid=unit_cell.gen_real_kpts_lattice([1,1,1])
+                if real_or_complex == 'Complex':
+                    unit_cell.kgrid = unit_cell.gen_complex_kpts_lattice([1,1,1])
+
                 self.scells = unit_cell.get_supercells(supercells)
 
                 self.structures = dict()
@@ -88,9 +101,10 @@ class System():
                         self.structures.update({key : unit_cell.make_scell(value)})
                 else:
                     for key, value in self.scells.iteritems():
-                        unit_cell.kgrid = copy.deepcopy(unit_cell.gen_real_kpts_lattice(value))
+                        #print unit_cell.kgrid
                         self.structures.update({key : copy.deepcopy(unit_cell)})
-
+                        #print self.structures["radius.1"].real_or_complex
+                #print self.structures["radius.1"].kgrid
 
         for file in glob.glob(self.inputfile):
             self.inputfile = file

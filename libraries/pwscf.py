@@ -66,14 +66,13 @@ class Pwscf:
             sys.exit()
 
         self.system = system
-        print dir(self.system.structures["radius.1"])
-        print self.system.structures["radius.1"].kgrid
         self.kwargs = dict()
 
         for scell_num, str in system.scells.iteritems():
             self.kwargs.update({scell_num :kwargs})
 
         self.process_system_inputs()
+
         self.process_pwscf_inputs()
         del self.kwargs
         self.write_pwscf_inputs()
@@ -83,6 +82,7 @@ class Pwscf:
     #self.k_point_lattice = gen_k_points_by_density(k_point_density)
 
     def process_pwscf_inputs(self):
+
 
         self.input_control = dict()
         self.input_system= dict()

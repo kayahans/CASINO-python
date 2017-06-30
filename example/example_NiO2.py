@@ -23,7 +23,9 @@ generic = System(
         source="icsd",
         supercells=[1],
         folded=True,
-    )
+        real_or_complex='Complex'
+        #real_or_complex='Real'
+)
 
 
 

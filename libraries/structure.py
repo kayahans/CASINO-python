@@ -7,7 +7,7 @@ import copy
 
 class Structure:
 
-    def __init__(self, lattice=None, species=None, coords=None):
+    def __init__(self, lattice=None, species=None, coords=None, real_or_complex='Real', mindistance=16):
 
 
         if lattice is None:
@@ -27,9 +27,16 @@ class Structure:
             print "No coords in Structure"
         else:
             self.coords = coords
-            #self.kgrid = self.gen_real_kpts_lattice([1,1,1])
-            self.kgrid = self.gen_complex_kpts_lattice([1,1,1])
-            print self.kgrid
+
+
+        if real_or_complex == 'Complex':
+            self.kgrid = self.gen_complex_kpts_lattice([1, 1, 1])
+        elif real_or_complex == 'Real':
+            self.kgrid = self.gen_real_kpts_lattice([1,1,1])
+        else:
+            print "No kgrid"
+
+            self.mindistance=mindistance
 
         if len(species) != len(coords):
             print "Number of species is not equal to number of coordinates"
@@ -273,17 +280,20 @@ class Structure:
 
         vasp.Vasp.write_poscar(a)
         f = open('PRECALC', 'w')
-        f.write("MINDISTANCE=16\n")
+        f.write("MINDISTANCE={0}\n".format(self.mindistance))
         f.write("INCLUDEGAMMA=AUTO\n")
-
         f.close()
+
+
 
         process = subprocess.Popen(
             "curl -s 'http://muellergroup.jhu.edu:8080/PreCalcServer/PreCalcServlet?format=vasp&messagelist=TRUE&clientversion=C2016.06.06' --form fileupload=@PRECALC --form fileupload=@POSCAR",
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = process.communicate()
-        print out
 
+
+        os.remove("POSCAR")
+        os.remove("PRECALC")
         match = False
         unitcell_k_grid = np.array([-1,-1,-1], dtype=float)
         unitcell_k_weights = np.array([-1], dtype=float)

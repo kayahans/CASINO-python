@@ -17,7 +17,9 @@ generic = System(
         source="icsd",
         supercells=[1,2,3,4],
         folded=True,
-    )
+        real_or_complex='Complex',
+        mindistance=16
+)
 
 sims = []
 scf = generate_pwscf(
@@ -25,3 +27,4 @@ scf = generate_pwscf(
         input_dft='lda'
 )
 
+#print generic.structures["radius.1"].kgrid
