@@ -256,8 +256,7 @@ class Structure:
         return np.hstack((rec_grid,rec_weights))
 
     def gen_complex_kpts_lattice(self,scell_matrix):
-        """Lattice based on monkhorst-pack kgrid"""
-
+        """Reciprocal lattice based on monkhorst-pack grid"""
 
         if isinstance(scell_matrix,list):
             scell_matrix=np.array(scell_matrix)
@@ -276,24 +275,33 @@ class Structure:
         rec_lattice_pts = np.array(self.rec_lattice_pts_in_scell(scell_matrix))
         #Real grid for [1,1,1] unit cell
 
-        a=vasp.Vasp(struct=self)
 
+        ##Connect to k-point grid server http://dx.doi.org/10.1103/PhysRevB.93.155109
+
+        #1.) write POSCAR in the working directory
+        a=vasp.Vasp(struct=self)
         vasp.Vasp.write_poscar(a)
+
+        #2.)Then write the PRECALC file
         f = open('PRECALC', 'w')
         f.write("MINDISTANCE={0}\n".format(self.mindistance))
+        f.write("MINTOTALKPOINTS=8\n")
         f.write("INCLUDEGAMMA=AUTO\n")
         f.close()
 
-
+        #3.)Connect to the k-point server, send POSCAR and PRECALC files stdout and srderr are in (out and err) tuple
 
         process = subprocess.Popen(
             "curl -s 'http://muellergroup.jhu.edu:8080/PreCalcServer/PreCalcServlet?format=vasp&messagelist=TRUE&clientversion=C2016.06.06' --form fileupload=@PRECALC --form fileupload=@POSCAR",
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = process.communicate()
 
-
+        #4.) Cleanup the intermediate files
         os.remove("POSCAR")
         os.remove("PRECALC")
+
+        #5.) Extract the k-point grid from out and return in pwscf readable format as in numpy array
+
         match = False
         unitcell_k_grid = np.array([-1,-1,-1], dtype=float)
         unitcell_k_weights = np.array([-1], dtype=float)
@@ -306,7 +314,6 @@ class Structure:
             elif match:
                 line = line.split()
 
-
                 if np.array_equal(unitcell_k_grid, np.array([-1,-1,-1])):
 
                     unitcell_k_grid = np.array([float(line[0]), float(line[1]), float(line[2])])
@@ -318,7 +325,6 @@ class Structure:
                     unitcell_k_weights=np.array([float(line[3])])
                 else:
                     unitcell_k_weights = np.vstack([unitcell_k_weights, np.array([float(line[3])])])
-
 
         #Scale the grid for supercells
         unitcell_k_weights = unitcell_k_weights / unitcell_k_weights.sum()

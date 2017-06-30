@@ -37,7 +37,7 @@ default_input_electrons = OrderedDict(
 )
 
 default_cell_params = OrderedDict(
-    header='&CELL cubic',
+    header='CELL_PARAMETERS angstrom',
     lattice_params = None
 )
 
@@ -224,7 +224,7 @@ class Pwscf:
                             f.write( "{0:30} = '{1}' \n".format(str(key), str(value)) )
                 f.write( "/" + "\n" )
 
-                #Write Cell Block
+                #Write CELL_PARAMETERS Block
                 f.write( self.input_cell_params[runnum]["header"] + "\n" )
                 for key, value in self.input_cell_params[runnum].iteritems():
 
@@ -239,7 +239,7 @@ class Pwscf:
                             f.write( "{0:30} = {1} \n".format(str(key), str(value)) )
                         else:
                             f.write( "{0:30} = '{1}' \n".format(str(key), str(value)) )
-                f.write( "/" + "\n" )
+                f.write( "\n" )
 
                 #Write ATOMIC SPECIES BLOCK
                 f.write( self.input_atomic_species[runnum]["header"] + "\n" )
@@ -255,7 +255,7 @@ class Pwscf:
                             f.write( "{0:30} = {1} \n".format(str(key), str(value)) )
                         else:
                             f.write( "{0:30} = '{1}' \n".format(str(key), str(value)) )
-                f.write( "/" + "\n" )
+                f.write( "\n" )
 
                 #Write Atomic Positions Block
                 f.write( self.input_atomic_positions[runnum]["header"] + "\n" )
@@ -274,7 +274,7 @@ class Pwscf:
                             f.write( "{0:30} = {1} \n".format(str(key), str(value)) )
                         else:
                             f.write( "{0:30} = '{1}' \n".format(str(key), str(value)) )
-                f.write( "/" + "\n" )
+                f.write(  "\n" )
 
                 #Write K POINTS Block
                 f.write( self.input_k_points[runnum]["header"] + "\n" )
@@ -298,7 +298,7 @@ class Pwscf:
                         else:
                             f.write( "{0:30} = '{1}' \n".format(str(key), str(value)) )
 
-
+                f.write("\n")
 
 def generate_pwscf(**kwargs):
     pwscf = Pwscf(**kwargs)
