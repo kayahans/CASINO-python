@@ -9,7 +9,7 @@ from pwscf import Pwscf
 from pprint import pprint
 from pw2casino import pw2casino
 
-
+# Input files are grouped into five
 # default_qmc_system
 # default_qmc_run
 # default_vmc_opt
