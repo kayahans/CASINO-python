@@ -180,6 +180,7 @@ class Casino:
         self.qmc_inputs=qmc_inputs
 
     def write_casino_inputs(self,rundir):
+        '''Write casino input file'''
         with open(rundir+'/input', mode='w') as f:
             f.write("# -------------------#\n")
             f.write("# CASINO input file #\n")
