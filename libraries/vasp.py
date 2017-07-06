@@ -30,7 +30,8 @@ class Vasp:
     def read_poscar(filename):
         """
 Reads VASP POSCAR files, and returns VASP object, currently only cartesian coordinates are supported
-Input VASP file must be in the following format, whitespaces are not important:
+Input VASP file must be in the following format (Cartesian POSCAR output using VESTA, http://jp-minerals.org/vesta/en/, will suffice).
+Whitespaces are not important:
 Ni1 O2
 1.0
         4.8754000664         0.0000000000         0.0000000000

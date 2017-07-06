@@ -62,49 +62,49 @@ settings = Settings()
 
 class System():
     """ Input file locations """
-    def __init__(self, name=None, source=None, supercells=None, structdir=None, folded = True, real_or_complex='Real',mindistance=16):
+    def __init__(self, name=None, source=None, supercell_size=None, structdir=None, folded = True, real_or_complex='Real', mindistance=16):
 
-        #print real_or_complex
+
         assert isinstance(name, str), error("System settings are wrong")
         assert isinstance(source, str), error("System settings are wrong")
 
         self.structdir = os.path.abspath(structdir + "/" + name + "/" + source + "/")
+        self.scell_size=supercell_size
+        self.inputfile=None
+        self.real_or_complex = real_or_complex
+        self.mindistance = mindistance
 
-        vaspInput = False
-        if self.structdir is not None:
-            vaspInput = True
+        vaspInput=False
+
+        for file in os.listdir(self.structdir):
+            if fnmatch.fnmatch(file, '*.vasp'):
+                self.inputfile = os.path.abspath(self.structdir + "/" + file)
+                vaspInput = True
+
+        if self.inputfile is not None:
             # Reads only vasp input for now
-            for file in os.listdir(self.structdir):
-                if fnmatch.fnmatch(file, '*.vasp'):
-                    self.inputfile = os.path.abspath(self.structdir + "/" + file)
+            if vaspInput:
 
-            if vaspInput is True:
                 unit_cell = Vasp.read_poscar(self.inputfile)
                 unit_cell = unit_cell.structure
 
                 #Transfer variables from System to structure
-                setattr(unit_cell,'real_or_complex',real_or_complex)
-                setattr(unit_cell, 'mindistance', mindistance)
 
                 assert isinstance(unit_cell, structure.Structure)
+                self.scell = unit_cell.get_supercell(supercell_size)
+
                 if real_or_complex == 'Real':
-                    unit_cell.kgrid=unit_cell.gen_real_kpts_lattice([1,1,1])
+                    unit_cell.kgrid=unit_cell.gen_real_kpts_lattice(self.scell)
                 if real_or_complex == 'Complex':
-                    unit_cell.kgrid = unit_cell.gen_complex_kpts_lattice([1,1,1])
+                    unit_cell.kgrid=unit_cell.gen_complex_kpts_lattice(self.scell,mindistance)
 
-                self.scells = unit_cell.get_supercells(supercells)
-
-                self.structures = dict()
+                self.unitcell=unit_cell
+                self.structure = []
 
                 if not folded:
-                    for key,value in self.scells.iteritems():
-                        self.structures.update({key : unit_cell.make_scell(value)})
+                    self.structure=unit_cell.make_scell(self.scell)
                 else:
-                    for key, value in self.scells.iteritems():
-                        #print unit_cell.kgrid
-                        self.structures.update({key : copy.deepcopy(unit_cell)})
-                        #print self.structures["radius.1"].real_or_complex
-                #print self.structures["radius.1"].kgrid
+                    self.structure=copy.deepcopy(unit_cell)
 
         for file in glob.glob(self.inputfile):
             self.inputfile = file
@@ -115,18 +115,9 @@ class System():
         if not os.path.exists(self.runpspdir):
             os.makedirs(self.runpspdir)
 
-        #for atoms in self.unique_atoms:
-        #    assert isinstance(atoms, str), Settings.error("Atoms in POSCAR are not strings")
-        #    os.symlink((settings.pspdir + '/' + atoms.title() + '.upf'),
-        #               (self.matpspdir + '/' + atoms.title() + settings.pspname + '.upf'))
-        #    os.symlink((settings.pspdir + '/' + atoms.lower() + '_pp.data'),
-        #               (self.matpspdir + '/' + atoms.title() + settings.pspname + '_data'))
+        self.rundir = settings.rootdir + '/runs/' + name + '/' + settings.pspname + '/' + source + '/radius.' + str(supercell_size)
 
-        rundirs = dict()
-        for key, value in self.scells.iteritems():
-            temp_rundir = settings.rootdir + '/runs/' + name + '/' + settings.pspname + '/' + source + '/' + str(key)
-            rundirs.update({key : temp_rundir})
-            if not os.path.exists(temp_rundir):
-                os.makedirs(temp_rundir)
+        if not os.path.exists(self.rundir):
+            os.makedirs(self.rundir)
 
-        self.rundirs = rundirs
+

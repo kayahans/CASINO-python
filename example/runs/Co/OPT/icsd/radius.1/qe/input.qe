@@ -1,0 +1,48 @@
+&CONTROL
+calculation                    = 'scf' 
+pseudo_dir                     = '/Users/kayahan/PycharmProjects/CASINO-python/example/runs/Co/OPT/psps' 
+wf_collect                     = 'True' 
+title                          = 'generic.qe' 
+/
+&SYSTEM
+nspin                          = 2 
+ecutwfc                        = 280 
+input_dft                      = 'lda' 
+nosym_evc                      = 'True' 
+noinv                          = 'True' 
+occupations                    = 'smearing' 
+ibrav                          = 0 
+nosym                          = 'True' 
+degauss                        = 0.02 
+starting_magnetization         = 0.7 
+nat                            = 2 
+ntyp                           = 1 
+/
+&ELECTRONS
+electron_maxstep               = 500 
+startingwfc                    = 'random' 
+/
+CELL_PARAMETERS angstrom
+2.5007829666     0.0000000000     0.0000000000   
+1.2503910257     2.1657421179     0.0000000000   
+0.0000000000     0.0000000000     4.0333309174   
+
+ATOMIC_SPECIES
+Co     58.9332000000    Co.OPT.upf     
+
+ATOMIC_POSITIONS angstrom
+Co   1.2503925610     0.7219132860     3.0249981880   
+Co   2.5007813200     1.4438287670     1.0083327290   
+
+K_POINTS crystal
+10
+0.0000000000 0.0000000000 0.1250000000 0.0200000000
+0.2000000000 1.0000000000 0.1250000000 0.1200000000
+0.4000000000 1.0000000000 0.1250000000 0.1200000000
+0.2000000000 0.8000000000 0.1250000000 0.1200000000
+0.4000000000 0.8000000000 0.1250000000 0.1200000000
+0.0000000000 0.0000000000 0.3750000000 0.0200000000
+0.2000000000 1.0000000000 0.3750000000 0.1200000000
+0.4000000000 1.0000000000 0.3750000000 0.1200000000
+0.2000000000 0.8000000000 0.3750000000 0.1200000000
+0.4000000000 0.8000000000 0.3750000000 0.1200000000

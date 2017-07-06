@@ -1,0 +1,48 @@
+&CONTROL
+calculation                    = 'scf' 
+pseudo_dir                     = '/Users/kayahan/PycharmProjects/CASINO-python/example/runs/Li/OPT/psps' 
+wf_collect                     = 'True' 
+title                          = 'generic.qe' 
+/
+&SYSTEM
+nspin                          = 2 
+ecutwfc                        = 120 
+input_dft                      = 'lda' 
+nosym_evc                      = 'True' 
+noinv                          = 'True' 
+occupations                    = 'smearing' 
+ibrav                          = 0 
+nosym                          = 'True' 
+degauss                        = 0.02 
+starting_magnetization         = 0.7 
+nat                            = 2 
+ntyp                           = 1 
+/
+&ELECTRONS
+electron_maxstep               = 500 
+startingwfc                    = 'random' 
+/
+CELL_PARAMETERS angstrom
+3.4909999371     0.0000000000     0.0000000000   
+0.0000000000     3.4909999371     0.0000000000   
+0.0000000000     0.0000000000     3.4909999371   
+
+ATOMIC_SPECIES
+Li     6.9410000000     Li.OPT.upf     
+
+ATOMIC_POSITIONS angstrom
+Li   0.0000000000     0.0000000000     0.0000000000   
+Li   1.7454999690     1.7454999690     1.7454999690   
+
+K_POINTS crystal
+10
+0.0833333333 0.0833333333 0.0833333333 0.0370370370
+0.2500000000 0.0833333333 0.0833333333 0.1111111111
+0.4166666667 0.0833333333 0.0833333333 0.1111111111
+0.2500000000 0.7500000000 0.0833333333 0.1111111111
+0.4166666667 0.7500000000 0.0833333333 0.2222222222
+0.4166666667 0.5833333333 0.0833333333 0.1111111111
+0.2500000000 0.7500000000 0.2500000000 0.0370370370
+0.4166666667 0.7500000000 0.2500000000 0.1111111111
+0.4166666667 0.5833333333 0.2500000000 0.1111111111
+0.4166666667 0.5833333333 0.4166666667 0.0370370370

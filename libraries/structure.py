@@ -171,44 +171,43 @@ class Structure:
 
         return Structure(lattice=new_lattice, species=new_species,coords=new_coords)
 
-    def get_supercells(self, scell_list):
+    def get_supercell(self, scell_size):
         # Find the most spherical diagonal supercell
-        result = dict()
+
         axes = self.lattice
         a = np.matrix(axes)
         b_keep = []
 
-        if isinstance(scell_list, int):
-            scell_list = [scell_list]
+        scell_size=int(scell_size)
+        assert isinstance(scell_size, int)
 
-        for scellsize in scell_list:
-            max_lattice = 100000
-            sa_range = (range(-scellsize, scellsize + 1, 1))
-            sa_range = [x for x in sa_range if x != 0]
-            for sa in sa_range:
-                sb_range = (range(-abs(scellsize / sa), abs(scellsize / sa) + 1))
-                sb_range = [x for x in sb_range if x != 0]
-                if (isinstance(item, int) for item in sb_range):
-                    for sb in sb_range:
-                        sc_range = (range(-abs(scellsize / (sa * sb)), abs(scellsize / (sa * sb)) + 1))
-                        sc_range = [x for x in sc_range if x != 0]
-                        if (isinstance(item, int) for item in sc_range):
-                            for sc in sc_range:
-                                if abs(sa * sb * sc) == scellsize:
-                                    b = np.array([sa, sb, sc])
+        max_lattice = 100000
+        sa_range = (range(-scell_size, scell_size + 1, 1))
+        sa_range = [x for x in sa_range if x != 0]
+        for sa in sa_range:
+            sb_range = (range(-abs(scell_size / sa), abs(scell_size / sa) + 1))
+            sb_range = [x for x in sb_range if x != 0]
+            if (isinstance(item, int) for item in sb_range):
+                for sb in sb_range:
+                    sc_range = (range(-abs(scell_size / (sa * sb)), abs(scell_size / (sa * sb)) + 1))
+                    sc_range = [x for x in sc_range if x != 0]
+                    if (isinstance(item, int) for item in sc_range):
+                        for sc in sc_range:
+                            if abs(sa * sb * sc) == scell_size:
+                                b = np.array([sa, sb, sc])
 
-                                    b_tmp = np.multiply(a, b)
-                                    b_tmp = np.multiply(b_tmp, b_tmp)
-                                    b_tmp = np.sum(b_tmp, axis=1)
-                                    b_tmp = np.sqrt(b_tmp)
-                                    max_b = np.max(b_tmp)
+                                b_tmp = np.multiply(a, b)
+                                b_tmp = np.multiply(b_tmp, b_tmp)
+                                b_tmp = np.sum(b_tmp, axis=1)
+                                b_tmp = np.sqrt(b_tmp)
+                                max_b = np.max(b_tmp)
 
-                                    if max_b <= max_lattice:
-                                        max_lattice = max_b
-                                        b_keep = b
+                                if max_b <= max_lattice:
+                                    max_lattice = max_b
+                                    b_keep = b
 
-            result.update({"radius." + str(abs(sa * sb * sc)): b_keep.tolist()})
-        return result
+
+        return b_keep.tolist()
 
     def gen_real_kpts_lattice(self,scell_matrix):
         """Generates gamma centered reciprocal lattice on real lattice for DMC calculations with scell_matrix
@@ -255,7 +254,7 @@ class Structure:
 
         return np.hstack((rec_grid,rec_weights))
 
-    def gen_complex_kpts_lattice(self,scell_matrix):
+    def gen_complex_kpts_lattice(self,scell_matrix,mindistance):
         """Reciprocal lattice based on monkhorst-pack grid"""
 
         if isinstance(scell_matrix,list):
@@ -273,6 +272,7 @@ class Structure:
 
         #Reciprocal lattice points inside the Brillouin zone for supercell lattice vectors
         rec_lattice_pts = np.array(self.rec_lattice_pts_in_scell(scell_matrix))
+
         #Real grid for [1,1,1] unit cell
 
 
@@ -284,7 +284,7 @@ class Structure:
 
         #2.)Then write the PRECALC file
         f = open('PRECALC', 'w')
-        f.write("MINDISTANCE={0}\n".format(self.mindistance))
+        f.write("MINDISTANCE={0}\n".format(mindistance))
         f.write("MINTOTALKPOINTS=8\n")
         f.write("INCLUDEGAMMA=AUTO\n")
         f.close()
@@ -328,6 +328,7 @@ class Structure:
 
         #Scale the grid for supercells
         unitcell_k_weights = unitcell_k_weights / unitcell_k_weights.sum()
+
         scaled_unitcell_k_grid = (np.dot(unitcell_k_grid, np.linalg.inv(scell_matrix)))
         scell_size = np.linalg.det(scell_matrix)
         scaled_unitcell_k_weights = unitcell_k_weights/scell_size
@@ -338,6 +339,7 @@ class Structure:
         for rec_lat_pt in rec_lattice_pts:
 
             lattice_origin = np.array([0, 0, 0], dtype=float)
+
 
             if np.array_equal(rec_lat_pt, lattice_origin):
                 rec_grid = scaled_unitcell_k_grid
