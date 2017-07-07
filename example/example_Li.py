@@ -13,8 +13,8 @@ settings(rootdir="./",
          machinename="cruller"
          )
 
-sims = []
-for scell in [1]:
+
+for scell in [1,2,4,8]:
     generic = System(
         name="Li",
         structdir="./Structs",
@@ -31,18 +31,15 @@ for scell in [1]:
         job=Job(nodes=2,time=12,name='dft',app='pwscf.x -pw2casino')
 
     )
-    sims.append(scf)
     psi = pw2casino(
         dft=scf
     )
-    sims.append(psi)
     vmc = generate_casino(
         dft=scf,
         psi=psi,
         qmc_prev=None,
         job=Job(nodes=8, time=12, name='vmc', app='casino')
     )
-    sims.append(vmc)
     dmc = generate_casino(
         dft=scf,
         psi=psi,
