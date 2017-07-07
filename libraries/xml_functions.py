@@ -41,7 +41,7 @@ class Pwxml:
             down = kpoint.find("DATAFILE.2")
             down_file = qedir+str(down.attrib["iotk_link"])
             (down_energy,ned) = get_energies(down_file)
-            print (neu,ned)
+
             self.spin_down_energies.update({int(down_file[-19:-15]): down_energy})
             self.down_nelect.append(ned)
 
@@ -92,7 +92,7 @@ def get_energies(filename=None):
     occ_arr = np.asarray(list)
 
     nelect=(occ_arr > 0.5).sum()
-    print nelect
+
     k_point_energy = np.dot(eig_arr, occ_arr)
     return k_point_energy,nelect
 

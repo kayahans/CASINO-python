@@ -3,7 +3,7 @@ from error_handler import error, warning
 import vasp
 import os,re
 import subprocess
-import copy
+
 
 class Structure:
 

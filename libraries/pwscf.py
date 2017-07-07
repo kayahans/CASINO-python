@@ -2,8 +2,8 @@ import sys,os,copy
 from collections import OrderedDict
 from units import atomic_weight
 import fnmatch
-import numpy as np
-from casino_python import settings
+from machines import Job
+from casino_python import settings,System
 from error_handler import error, warning
 
 default_input_control = OrderedDict(
@@ -59,36 +59,36 @@ default_k_points = OrderedDict(
 
 class Pwscf:
 
-    def __init__(self, system=None, **kwargs):
+    def __init__(self, system=None, job=None, **kwargs):
 
-        if system is None:
-            raise ValueError('system keyword must be used in generate_pwscf block')
-
-
+        assert isinstance(system, System)
+        assert isinstance(job, Job)
+        #Inputs
         self.system = system
-        self.rundir =system.rundir+'/qe'
-        if not os.path.exists(self.rundir):
-            os.mkdir(self.rundir)
-        self.kwargs=kwargs
+        self.job=Job(name=job.name,cores=job.cores,time=job.time,app=job.app+' < input.qe > output.qe')
+        self.kwargs = kwargs
+
+        #Class derived parameters
+        self.rundir = system.rundir + '/qe'
+        self.inputfile = self.rundir + '/input.qe'
+        self.outputfile = self.rundir + '/output.qe'
+        self.complete = False
+
+        #Prepare input parameters - new attr
         self.process_system_inputs()
         self.process_pwscf_inputs()
-        del self.kwargs
-        self.write_pwscf_inputs()
 
+        #Check if calculation already finished
+        self.complete=False
+        self.running=False
+        self.control_pwscf()
 
-
-    #self.k_point_lattice = gen_k_points_by_density(k_point_density)
+        # If complete, do nothing; else write input.qe
+        if not self.running and not self.complete:
+            self.write_pwscf_inputs()
+            self.execute()
 
     def process_pwscf_inputs(self):
-
-
-        self.input_control = dict()
-        self.input_system= dict()
-        self.input_electrons= dict()
-        self.input_cell_params= dict()
-        self.input_atomic_species= dict()
-        self.input_atomic_positions= dict()
-        self.input_k_points= dict()
 
         self.input_control = default_input_control.copy()
         self.input_system = default_input_system.copy()
@@ -97,7 +97,6 @@ class Pwscf:
         self.input_atomic_species = default_atomic_species.copy()
         self.input_atomic_positions = default_atomic_positions.copy()
         self.input_k_points = default_k_points.copy()
-
 
         for key, value in self.kwargs.iteritems():
             if key in self.input_control:
@@ -115,10 +114,11 @@ class Pwscf:
             if key in self.input_k_points:
                 self.input_k_points[key] = value
 
+        del self.kwargs
+
     def process_system_inputs(self):
 
         system = self.system
-        scell_num=self.system.scell_size
         structure=self.system.structure
         unique_atoms = set(structure.species)
         natoms = len(structure.species)
@@ -161,19 +161,22 @@ class Pwscf:
                         'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', \
                         'La', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', \
                         'Ac', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn'])
-        atoms = self.system.structures.species
+        atoms = self.system.structure.species
 
-        unique_atoms = set(self.system.structures.species)
+        unique_atoms = set(self.system.structure.species)
         if list(t_metals & unique_atoms):
             t_metal_atom = list(t_metals & unique_atoms)[0]
-            t_metal_atom_index = atoms.index(t_metal_atom)
-            self.kwargs["starting_magnetization"]
-
-
+            t_metal_atom_index = unique_atoms.index(t_metal_atom)
+            return t_metal_atom_index
+        else:
+            return 1
 
     def write_pwscf_inputs(self):
-        rundir = self.rundir
-        with open(rundir + '/input.qe', mode='w') as f:
+
+        if not os.path.exists(self.rundir):
+            os.mkdir(self.rundir)
+
+        with open(self.rundir + '/input.qe', mode='w') as f:
 
             # Write Control Block
             f.write(self.input_control["header"] + "\n")
@@ -194,6 +197,9 @@ class Pwscf:
 
                 if key is 'header':
                     pass
+                elif key is 'starting_magnetization':
+                    key='starting_magnetization({0})'.format(self.transition_metal())
+                    f.write("{0:30} = {1} \n".format(key, str(value)))
                 else:
                     if isinstance(value, int) or isinstance(value, float):
                         f.write("{0:30} = {1} \n".format(str(key), str(value)))
@@ -249,7 +255,7 @@ class Pwscf:
                         f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
             f.write("\n")
 
-            # Write Atomic Positions Block
+            # Write Atomic Positiostarting_magnetizationns Block
             f.write(self.input_atomic_positions["header"] + "\n")
             for key, value in self.input_atomic_positions.iteritems():
 
@@ -293,10 +299,31 @@ class Pwscf:
 
             f.write("\n")
 
+    def control_pwscf(self):
 
+        if os.path.exists(self.outputfile):
+            self.running=True
+            if os.path.exists(self.rundir + '/pwscf.save/data-file.xml'):
+                with open(self.outputfile) as f:
+                    for line in f:
+                        if line.strip() == 'iteration #  {0}'.format(self.input_electrons['electron_maxstep']):
+                            self.complete = False
+                            break
+                        if line.strip() == 'JOB DONE.':
+                            self.complete = True
+                            self.running = False
 
+    def execute(self):
+        cur_dir=os.getcwd()
+        os.chdir(self.rundir)
+        script_name='job.'+self.job.name+'.sh'
+        with open(script_name, 'w') as f:
+            f.write(self.job.script)
 
+        #os.system(self.job.run_command + " " + script_name)
+        os.chdir(cur_dir)
 
 def generate_pwscf(**kwargs):
     pwscf = Pwscf(**kwargs)
     return pwscf
+

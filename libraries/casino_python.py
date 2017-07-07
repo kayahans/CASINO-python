@@ -16,25 +16,28 @@ settings_list = dict(rootdir="./",
                     machinename="workstation",
                     results_only = 1)
 
-
-
-
 class Settings(object):
     """Settings here"""
 
     def __call__(self, **kwargs):
 
         for key,value in kwargs.iteritems():
+            if key in settings_list:
+                settings_list[key]=value
+
+        for key,value in settings_list.iteritems():
             setattr(self,key,value)
 
         self.rootdir = os.path.abspath(self.rootdir)
-        self.pspdir = os.path.abspath(self.pspdir)
         if not os.path.exists(self.rootdir):
             error("rootdir does not exist")
 
+        self.pspdir = os.path.abspath(self.pspdir)
         if not os.path.exists(self.pspdir):
             error("pspdir:(" +self.pspdir+ ") does not exist")
 
+        self.pspname = str(self.pspname)
+        self.machinename = self.machinename
         if not isinstance(self.pspcutoffs, int):
             if not os.path.exists(self.pspcutoffs):
                 self.pspcutoffs = self.pspdir + '/' + self.pspname + '/' + self.pspcutoffs
@@ -56,6 +59,7 @@ class Settings(object):
             message = "System hostname (" + str(
                 socket.gethostname()) + ") is different from input hostname (" + self.machinename + "), but running anyway!"
             warning(message)
+
 
 
 settings = Settings()
