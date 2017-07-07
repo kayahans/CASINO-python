@@ -3,6 +3,7 @@
 # -------------------#
 
 #SYSTEM
+
 atom_basis_type = blip
 complex_wf = False
 interaction = ewald
@@ -11,11 +12,13 @@ neu = 2
 periodic = True
 psi_s = slater
 write_binary_blips = True
+
 %block scell_matrix
 1 1 1
 %block scell_matrix
 
 #RUN
+
 backflow = False
 esupercell = False
 expot = False
@@ -30,6 +33,7 @@ use_jastrow = True
 vm_reweight = False
 
 #VMC
+
 opt_backflow = False
 opt_cycles = 5
 opt_det_coeff = False
@@ -44,6 +48,7 @@ vmc_nconfig_write = 15000
 vmc_nstep = 15000
 
 #Expectation values
+
 cond_fraction = False
 density = False
 dipole_moment = False

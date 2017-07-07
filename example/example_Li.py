@@ -1,20 +1,17 @@
 #! /usr/bin/env python
 from casino_python import settings,System
-import pwscf
+from pwscf import generate_pwscf
 from casino import generate_casino
 from analyze_results import results
 from pw2casino import  pw2casino
-from pprint import pprint
+from machines import Job
 
 settings(rootdir="./",
          pspdir="./Psps",
          pspname="OPT",
          pspcutoffs="./psp.txt",
-         machinename="cruller",
+         machinename="cruller"
          )
-
-
-#print pprint(vars(settings))
 
 sims = []
 for scell in [1]:
@@ -24,13 +21,15 @@ for scell in [1]:
         source="icsd",
         supercell_size=scell,
         folded=True,
-        real_or_complex='Complex',
+        real_or_complex='Real',
         mindistance=16
         #real_or_complex='Real'
     )
-    scf = pwscf.generate_pwscf(
-    system=generic,
-    input_dft='lda'
+    scf = generate_pwscf(
+        system = generic,
+        input_dft = 'lda',
+        job=Job(nodes=2,time=12,name='dft',app='pwscf.x -pw2casino')
+
     )
     sims.append(scf)
     psi = pw2casino(
@@ -41,22 +40,13 @@ for scell in [1]:
         dft=scf,
         psi=psi,
         qmc_prev=None,
+        job=Job(nodes=8, time=12, name='vmc', app='casino')
     )
     sims.append(vmc)
     dmc = generate_casino(
         dft=scf,
         psi=psi,
-        qmc_prev=vmc
+        qmc_prev=vmc,
+        job=Job(nodes=80, time=12, name='vmc', app='casino')
     )
-#for sim in sims:
-#    print pprint(vars(sim))
 
-
-
-
-
-
-#dmc = generate_casino(
-#    psi=psi,
-#    qmc_prev=vmc
-#)
