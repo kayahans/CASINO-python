@@ -71,6 +71,12 @@ module load mvapich2-2.0/intel
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/Compiler/11.1/072/lib/intel64:/opt/intel/mkl/10.2.5.035/lib/em64t
 source /opt/intel/Compiler/11.1/072/bin/ifortvars.sh intel64
+if [ -f /usr/share/Modules/init/bash ]; then
+        source /usr/share/Modules/init/bash
+else
+        echo "Could not source environment modules!"
+        exit 1
+fi
     ''',
     cpu_per_node=12,
     max_node=38,
