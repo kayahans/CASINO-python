@@ -33,9 +33,9 @@ class pw2casino:
         self.running=False
 
         self.control_pw2casino()
-        self.xml = Pwxml(self.dft.rundir)
 
         if not self.complete:
+            self.xml = Pwxml(self.dft.rundir)
             self.divide_wfn()
             self.complete=True
         else:
