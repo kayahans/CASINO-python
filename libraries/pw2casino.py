@@ -84,7 +84,7 @@ class pw2casino:
                         header+=str(self.dft.system.scell_size)+'\n'
                     elif line == kpoint_s:
                         i += 1
-                        print str(float(i) / float(numkpts)) + "\r"
+                        print str(float(i) / float(numkpts)),"\r"
                         first=False
                     else:
                         header += line
@@ -92,7 +92,7 @@ class pw2casino:
                     if line == kpoint_s:
                         new=True
                         i += 1
-                        print str(float(i) / float(numkpts))+"\r"
+                        print str(float(i) / float(numkpts)),"\r"
 
                         k_info = line
                         k_list.append(
@@ -101,6 +101,7 @@ class pw2casino:
                     else:
                         new=False
         print header
+        print ""
 
     def control_pw2casino(self):
 
