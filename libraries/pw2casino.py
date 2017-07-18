@@ -73,6 +73,7 @@ class pw2casino:
                 line = line.split()
                 if first:
                     if line == kpoint_s:
+                        print 'a new one'
                         first=False
                     else:
                         header += line
