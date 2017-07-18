@@ -76,7 +76,7 @@ class pw2casino:
                 if first:
                     if line == 'Number of k-points'.split():
                         count=True
-                        header+=line+'\n'
+                        header+=str(line)+'\n'
                     elif count==True:
                         numkpts=int(line)
                         count=False
