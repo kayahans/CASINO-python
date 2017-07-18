@@ -11,7 +11,7 @@ default_input_control = OrderedDict(
     title='generic.qe',
     calculation='scf',
     pseudo_dir='./',
-    wf_collect='True'
+    wf_collect=True
 )
 
 default_input_system = OrderedDict(
@@ -22,9 +22,9 @@ default_input_system = OrderedDict(
     occupations='smearing',
     degauss=0.02,
     starting_magnetization=0.7,
-    nosym='True',
-    noinv='True',
-    nosym_evc='True',
+    nosym=True,
+    noinv=True,
+    nosym_evc=True,
     ibrav=0,
     ntyp=None,
     nat=None
