@@ -63,7 +63,7 @@ class pw2casino:
 
         k_list = []
         header = []
-        new = True
+        after_kpts_str = False
 
         count=False
         numkpts=0
@@ -76,6 +76,14 @@ class pw2casino:
         if not os.path.exists(self.rundir):
             os.mkdir(self.rundir)
 
+        multi_twist=False
+        nscell=1
+        after_kpts_str = False
+
+        if self.dft.system.scell_size > 1:
+            multi_twist=True
+            nscell=self.dft.system.scell_size
+
         with open(self.bwfn) as f:
             with open(self.rundir + '/summary.txt', 'w') as g:
                 g.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons')
@@ -87,7 +95,7 @@ class pw2casino:
                             count = True
                             header += ' '.join(line) + '\n'
                         elif count == True:
-                            numkpts = int(str(line[0]))
+                            numkpts = int(str(line[0])) / int(self.dft.system.scell_size)
                             files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts)]
                             count = False
                             header += ' '.join('\t' + str(self.dft.system.scell_size) + '\n')
@@ -96,39 +104,42 @@ class pw2casino:
                         else:
                             header += ' '.join(line)+ '\n'
                     else:
-                        print files
-                        if line == kpoint_s:
-                            new = True
-                            prt = (index * 100) / numkpts
-                            sys.stdout.write(str(prt) + ' percent complete' + '\r')
-                            sys.stdout.flush()
-
-                            index += 1
-                            print index
-                            for item in header:
-                                files[index-1].write(item)
-
-                            files[index - 1].write(' '.join(kpoint_s) + '\n')
-                            #files[index - 1].write(str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t' + '\n')
-
-                            self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
-                            header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
-                            self.neu.update(
-                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
-                            self.ned.update(
-                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
-                            g.write(
-                                'bwfn.{0:0>3}.data'.format(index) + ' ' + str(
-                                    self.xml.up_nelect[index]) + ' ' + str(
-                                    self.xml.down_nelect[index]) + '\n')
-
-
-
+                        if multi_twist:
+                            pass
                         else:
-                            new = False
-                            files[index-1].write(' '.join(line) + '\n')
+                            if line == kpoint_s:
 
-        print header
+                                prt = (index * 100) / numkpts
+                                sys.stdout.write(str(prt) + ' percent complete' + '\r')
+                                sys.stdout.flush()
+
+                                index += 1
+                                print index
+                                for item in header:
+                                    files[index - 1].write(item)
+
+                                files[index - 1].write(' '.join(kpoint_s) + '\n')
+                                # files[index - 1].write(str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t' + '\n')
+
+                                self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
+                                header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
+                                self.neu.update(
+                                    {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
+                                self.ned.update(
+                                    {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
+                                g.write(
+                                    'bwfn.{0:0>3}.data'.format(index) + ' ' + str(
+                                        self.xml.up_nelect[index]) + ' ' + str(
+                                        self.xml.down_nelect[index]) + '\n')
+                                after_kpts_str = True
+
+                            elif after_kpts_str:
+                                line[0]=1
+                                files[index - 1].write(' '.join(line) + '\n')
+
+                            else:
+
+                                files[index - 1].write(' '.join(line) + '\n')
         print ""
 
     def control_pw2casino(self):
