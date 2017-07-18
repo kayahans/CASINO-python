@@ -60,48 +60,29 @@ class pw2casino:
         kpoint_s = 'k-point # ; # of bands (up spin/down spin);            k-point coords (au)'
         k_list = []
         header = []
+        new = True
         first = True
+
+        print 'Reading pwscf.bwfn.data'
+
+        first=True
         with open(self.bwfn) as f:
-            old = f.readlines()
-            print 'pwscf.bwfn.data is read'
-            for i in range(0, len(old)):
-                line = old[i]
-                if old[i].split() == kpoint_s.split():
-                    if first:
-                        first = False
-                        header = old[0:i]
+            for line in f:
+                if first:
+                    if line.split() == kpoint_s.split():
+                        first=False
+                    else:
+                        header += line
+                else:
+                    if line.split() == kpoint_s.split():
+                        new=True
+                        k_info = line.split()
+                        k_list.append(
+                            kpoints(num=k_info[0], nbnds_up=k_info[1], nbnds_down=k_info[2], coords=k_info[3:]))
 
-                    k_info = old[i + 1].split()
-                    k_list.append(kpoints(num=k_info[0], nbnds_up=k_info[1], nbnds_down=k_info[2], coords=k_info[3:],
-                                          start=i + 2))
-                    if len(k_list) > 1:
-                        k_list[-2].end = i
-            k_list[-1].end = len(old) - 1
-
-            header[-1] = '\t' + str(self.dft.system.scell_size) + '\n'
-            if not os.path.exists(self.rundir):
-                os.mkdir(self.rundir)
-            print 'Started writing individial bwfn files'
-            with open(self.rundir+'/summary.txt', 'w') as f:
-                f.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons')
-                for index, kpt in enumerate(k_list):
-                    print 'Writing ' + str(index)+'.bwfn.data!'
-                    assert isinstance(kpt, kpoints)
-                    self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
-                    header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
-                    self.neu.update({sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
-                    self.ned.update({sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
-                    f.write('bwfn.{0:0>3}.data'.format(index) + ' ' + str(self.xml.up_nelect[index]) + ' ' + str(self.xml.down_nelect[index])+'\n')
-                    with open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index), 'w') as output:
-                        for item in header:
-                            output.write(item)
-                        output.write(kpoint_s + '\n')
-                        output.write('1' + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t')
-                        for item in kpt.coords:
-                            output.write(item + '\t')
-                        output.write('\n')
-                        for item in old[kpt.start:kpt.end]:
-                            output.write(item)
+                    else:
+                        new=False
+        print header
 
     def control_pw2casino(self):
 
