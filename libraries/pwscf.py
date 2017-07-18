@@ -320,7 +320,8 @@ class Pwscf:
         with open(script_name, 'w') as f:
             f.write(self.job.script)
 
-        #os.system(self.job.run_command + " " + script_name)
+
+        os.system(self.job.run_command + " " + script_name)
         os.chdir(cur_dir)
 
 def generate_pwscf(**kwargs):
