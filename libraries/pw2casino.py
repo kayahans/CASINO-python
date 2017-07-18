@@ -76,13 +76,9 @@ class pw2casino:
         if not os.path.exists(self.rundir):
             os.mkdir(self.rundir)
 
-        multi_twist=False
-        nscell=1
-        after_kpts_str = False
 
-        if self.dft.system.scell_size > 1:
-            multi_twist=True
-            nscell=self.dft.system.scell_size
+        nscell = self.dft.system.scell_size
+        after_kpts_str = False
 
         with open(self.bwfn) as f:
             with open(self.rundir + '/summary.txt', 'w') as g:
@@ -104,44 +100,41 @@ class pw2casino:
                         else:
                             header += ' '.join(line)+ '\n'
                     else:
-                        if multi_twist:
-                            pass
+                        if line == kpoint_s:
+
+                            prt = (index * 100) / (numkpts*nscell)
+                            sys.stdout.write(str(prt) + ' percent complete' + '\r')
+                            sys.stdout.flush()
+
+                            index += 1
+                            print index
+                            for item in header:
+                                files[index % numkpts- 1].write(item)
+
+                            files[index - 1].write(' '.join(kpoint_s) + '\n')
+                            # files[index - 1].write(str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t' + '\n')
+
+                            self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
+                            header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
+                            self.neu.update(
+                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
+                            self.ned.update(
+                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
+                            g.write(
+                                'bwfn.{0:0>3}.data'.format(index) + ' ' + str(
+                                    self.xml.up_nelect[index]) + ' ' + str(
+                                    self.xml.down_nelect[index]) + '\n')
+                            after_kpts_str = True
+
+                        elif after_kpts_str:
+                            print line
+                            line[0] = str(1)
+                            files[index % numkpts- 1].write(' '.join(line) + '\n')
+                            after_kpts_str = False
+
                         else:
-                            if line == kpoint_s:
 
-                                prt = (index * 100) / numkpts
-                                sys.stdout.write(str(prt) + ' percent complete' + '\r')
-                                sys.stdout.flush()
-
-                                index += 1
-                                print index
-                                for item in header:
-                                    files[index - 1].write(item)
-
-                                files[index - 1].write(' '.join(kpoint_s) + '\n')
-                                # files[index - 1].write(str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t' + '\n')
-
-                                self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
-                                header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
-                                self.neu.update(
-                                    {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
-                                self.ned.update(
-                                    {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
-                                g.write(
-                                    'bwfn.{0:0>3}.data'.format(index) + ' ' + str(
-                                        self.xml.up_nelect[index]) + ' ' + str(
-                                        self.xml.down_nelect[index]) + '\n')
-                                after_kpts_str = True
-
-                            elif after_kpts_str:
-                                print line
-                                line[0]=str(1)
-                                files[index - 1].write(' '.join(line) + '\n')
-                                after_kpts_str = False
-
-                            else:
-
-                                files[index - 1].write(' '.join(line) + '\n')
+                            files[index % numkpts - 1].write(' '.join(line) + '\n')
         print ""
 
     def control_pw2casino(self):
