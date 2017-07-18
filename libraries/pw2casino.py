@@ -80,7 +80,7 @@ class pw2casino:
             with open(self.rundir + '/summary.txt', 'w') as g:
                 g.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons')
                 for line in f:
-                    line = line.split()
+                    line = str(line.split())
                     if first:
                         if line == 'Number of k-points'.split():
                             count = True
