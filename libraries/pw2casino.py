@@ -41,6 +41,7 @@ class pw2casino:
             if not self.complete and not self.running:
                 print self.rundir + ' is running now!'
                 self.xml = Pwxml(self.dft.rundir)
+                print 'data-file.xml is read'
                 self.divide_wfn()
                 self.complete=True
             else:
@@ -62,6 +63,7 @@ class pw2casino:
         first = True
         with open(self.bwfn) as f:
             old = f.readlines()
+            print 'pwscf.bwfn.data is read'
             for i in range(0, len(old)):
                 line = old[i]
                 if old[i].split() == kpoint_s.split():
@@ -79,9 +81,11 @@ class pw2casino:
             header[-1] = '\t' + str(self.dft.system.scell_size) + '\n'
             if not os.path.exists(self.rundir):
                 os.mkdir(self.rundir)
+            print 'Started writing individial bwfn files'
             with open(self.rundir+'/summary.txt', 'w') as f:
                 f.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons')
                 for index, kpt in enumerate(k_list):
+                    print 'Writing ' + str(index)+'.bwfn.data!'
                     assert isinstance(kpt, kpoints)
                     self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
                     header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
