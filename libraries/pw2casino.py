@@ -112,7 +112,7 @@ class pw2casino:
 
 
                             for item in header:
-                                files[index % numkpts].write(item)
+                                files[(index+1) % numkpts - 1].write(item)
 
                             files[(index+1) % numkpts - 1].write(' '.join(kpoint_s) + '\n')
 
