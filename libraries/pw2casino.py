@@ -85,6 +85,7 @@ class pw2casino:
                     elif line == kpoint_s:
                         i += 1
                         print str(float(i) / float(numkpts)),"\r"
+                        sys.stdout.flush()
                         first=False
                     else:
                         header += line
@@ -93,6 +94,7 @@ class pw2casino:
                         new=True
                         i += 1
                         print str(float(i) / float(numkpts)),"\r"
+                        sys.stdout.flush()
 
                         k_info = line
                         k_list.append(
