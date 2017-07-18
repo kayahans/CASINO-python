@@ -84,7 +84,7 @@ class pw2casino:
                         header+=str(self.dft.system.scell_size)+'\n'
                     elif line == kpoint_s:
                         i += 1
-                        sys.stdout.write(float(i)/float(numkpts))
+                        sys.stdout.write(str(float(i)/float(numkpts)))
                         sys.stdout.flush()
                         first=False
                     else:
@@ -93,7 +93,7 @@ class pw2casino:
                     if line == kpoint_s:
                         new=True
                         i += 1
-                        sys.stdout.write(float(i) / float(numkpts))
+                        sys.stdout.write(str(float(i) / float(numkpts)))
                         sys.stdout.flush()
                         k_info = line
                         k_list.append(
