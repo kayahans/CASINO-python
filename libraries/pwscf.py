@@ -88,6 +88,12 @@ class Pwscf:
             self.write_pwscf_inputs()
             self.execute()
 
+        if self.complete:
+            print self.rundir + ' is already completed!'
+
+        if self.running:
+            print self.rundir + ' is already running!'
+
     def process_pwscf_inputs(self):
 
         self.input_control = default_input_control.copy()
