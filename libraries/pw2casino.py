@@ -30,6 +30,7 @@ class pw2casino:
         self.ned=dict()
 
         self.complete=False
+        self.running=False
 
         self.control_pw2casino()
         self.xml = Pwxml(self.dft.rundir)

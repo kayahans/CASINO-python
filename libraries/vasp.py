@@ -121,7 +121,7 @@ Cartesian
             if out_str.iscartesian:
                 f.write("Cartesian" + '\n')
             for row in out_str.structure.coords:
-                 f.write('{:>12}  {:>12}  {:>12}'.format(str(row[0]), str(row[1]), str(row[2])) + '\n')
+                 f.write('{0:>12}  {1:>12}  {2:>12}'.format(str(row[0]), str(row[1]), str(row[2])) + '\n')
             f.close()
 
     def get_structure(self):
