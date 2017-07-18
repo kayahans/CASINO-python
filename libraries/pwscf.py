@@ -187,6 +187,8 @@ class Pwscf:
                 else:
                     if isinstance(value, int) or isinstance(value, float):
                         f.write("{0:30} = {1} \n".format(str(key), str(value)))
+                    elif isinstance(value, bool):
+                        f.write("{0:30} = {1} \n".format(str(key), str(value)))
                     else:
                         f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
             f.write("/" + "\n")
@@ -202,6 +204,8 @@ class Pwscf:
                     f.write("{0:30} = {1} \n".format(key, str(value)))
                 else:
                     if isinstance(value, int) or isinstance(value, float):
+                        f.write("{0:30} = {1} \n".format(str(key), str(value)))
+                    elif isinstance(value, bool):
                         f.write("{0:30} = {1} \n".format(str(key), str(value)))
                     else:
                         f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
@@ -235,6 +239,8 @@ class Pwscf:
                 else:
                     if isinstance(value, int) or isinstance(value, float):
                         f.write("{0:30} = {1} \n".format(str(key), str(value)))
+                    elif isinstance(value, bool):
+                        f.write("{0:30} = {1} \n".format(str(key), str(value)))
                     else:
                         f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
             f.write("\n")
@@ -250,6 +256,8 @@ class Pwscf:
                         f.write('{0:5}  {1:15}  {2:15}'.format(row[0], str(format(row[1], '.10f')), row[2]) + '\n')
                 else:
                     if isinstance(value, int) or isinstance(value, float):
+                        f.write("{0:30} = {1} \n".format(str(key), str(value)))
+                    elif isinstance(value, bool):
                         f.write("{0:30} = {1} \n".format(str(key), str(value)))
                     else:
                         f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
@@ -269,6 +277,8 @@ class Pwscf:
                                                                 str(format(row[1][2], '.10f'))) + '\n')
                 else:
                     if isinstance(value, int) or isinstance(value, float):
+                        f.write("{0:30} = {1} \n".format(str(key), str(value)))
+                    elif isinstance(value, bool):
                         f.write("{0:30} = {1} \n".format(str(key), str(value)))
                     else:
                         f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
@@ -293,6 +303,8 @@ class Pwscf:
                     # f.write('{0:15} {1:15} {2:15} {3:15}'.format(str(format(row[0], '.10f')), str(format(row[1], '.10f')), str(format(row[2], '.10f')), str(format(kgrid_weights, '.10f'))) + '\n')
                 else:
                     if isinstance(value, int) or isinstance(value, float):
+                        f.write("{0:30} = {1} \n".format(str(key), str(value)))
+                    elif isinstance(value, bool):
                         f.write("{0:30} = {1} \n".format(str(key), str(value)))
                     else:
                         f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
