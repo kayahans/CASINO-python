@@ -90,28 +90,7 @@ class pw2casino:
                             files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index), 'w') for index in range(1, numkpts)]
                             count = False
                             header += ' '.join('\t' + str(self.dft.system.scell_size) + '\n')
-
-                        elif line == kpoint_s:
-                            print 'Started writing individial bwfn files'
-                            index+=1
-                            first = False
-                            for item in header:
-                                files[index-1].write(item)
-
-                            files[index - 1].write(' '.join(str(kpoint_s) + '\n'))
-                            files[index - 1].write(
-                                str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[
-                                    index].nbnds_down + '\t' + '\n')
-                            self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
-                            header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
-                            self.neu.update(
-                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
-                            self.ned.update(
-                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
-                            g.write(
-                                'bwfn.{0:0>3}.data'.format(index) + ' ' + str(
-                                    self.xml.up_nelect[index]) + ' ' + str(
-                                    self.xml.down_nelect[index]) + '\n')
+                            first=False
 
                         else:
                             header += ' '.join(str(line) + '\n')
