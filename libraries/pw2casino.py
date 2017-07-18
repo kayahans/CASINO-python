@@ -30,9 +30,9 @@ class pw2casino:
         self.neu=dict()
         self.ned=dict()
 
-        self.complete=False
-        self.running=False
-        self.dependencies=True
+        self.complete = False
+        self.running = False
+        self.dependencies = True
 
         self.control_pw2casino()
 
