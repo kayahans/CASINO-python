@@ -84,7 +84,7 @@ class pw2casino:
 
         with open(self.bwfn) as f:
             with open(self.rundir + '/summary.txt', 'w') as g:
-                g.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons')
+                g.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons' + '\n')
                 for line in f:
                     line = line.split()
 
@@ -115,7 +115,6 @@ class pw2casino:
                                 files[index % numkpts- 1].write(item)
 
                             files[index - 1].write(' '.join(kpoint_s) + '\n')
-
 
                             self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
                             header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
