@@ -176,6 +176,14 @@ class Pwscf:
         if not os.path.exists(self.rundir):
             os.mkdir(self.rundir)
 
+        with open(self.rundir + '/pw2casino.dat', mode='w') as f:
+            f.write('''&inputpp
+blip_convert=.true.
+blip_binary=.false.
+blip_single_prec=.false.
+blip_multiplicity=1.d0
+n_points_for_test=100
+/''')
         with open(self.rundir + '/input.qe', mode='w') as f:
 
             # Write Control Block
