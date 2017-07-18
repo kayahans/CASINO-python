@@ -87,7 +87,7 @@ class pw2casino:
                             header += ' '.join(str(line) + '\n')
                         elif count == True:
                             numkpts = int(str(line[0]))
-                            files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index), 'w') for index in range(1, numkpts)]
+                            files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts)]
                             count = False
                             header += ' '.join('\t' + str(self.dft.system.scell_size) + '\n')
                             first=False
@@ -95,7 +95,7 @@ class pw2casino:
                         else:
                             header += ' '.join(str(line) + '\n')
                     else:
-
+                        print files
                         if line == kpoint_s:
                             new = True
                             prt = (index * 100) / numkpts
@@ -103,13 +103,12 @@ class pw2casino:
                             sys.stdout.flush()
 
                             index += 1
+                            print index
                             for item in header:
                                 files[index-1].write(item)
 
                             files[index - 1].write(' '.join(str(kpoint_s) + '\n') )
-                            files[index - 1].write(
-                                str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[
-                                    index].nbnds_down + '\t' + '\n')
+                            #files[index - 1].write(str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t' + '\n')
 
                             self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
                             header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
