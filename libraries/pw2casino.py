@@ -84,7 +84,7 @@ class pw2casino:
                     if first:
                         if line == 'Number of k-points'.split():
                             count = True
-                            header += ' '.join(line + '\n')
+                            header += ' '.join(str(line) + '\n')
                         elif count == True:
                             numkpts = int(str(line[0]))
                             files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index), 'w') for index in range(1, numkpts)]
@@ -97,7 +97,7 @@ class pw2casino:
                             first = False
                             for item in header:
                                 files[index-1].write(item)
-                            files[index - 1].write(' '.join(kpoint_s + '\n') )
+                                files[index - 1].write(' '.join(str(kpoint_s) + '\n'))
                             files[index - 1].write(
                                 str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[
                                     index].nbnds_down + '\t' + '\n')
@@ -113,7 +113,7 @@ class pw2casino:
                                     self.xml.down_nelect[index]) + '\n')
 
                         else:
-                            header += ' '.join(line + '\n')
+                            header += ' '.join(str(line) + '\n')
                     else:
 
                         if line == kpoint_s:
@@ -126,7 +126,7 @@ class pw2casino:
                             for item in header:
                                 files[index-1].write(item)
 
-                            files[index - 1].write(' '.join(kpoint_s + '\n') )
+                            files[index - 1].write(' '.join(str(kpoint_s) + '\n') )
                             files[index - 1].write(
                                 str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[
                                     index].nbnds_down + '\t' + '\n')
