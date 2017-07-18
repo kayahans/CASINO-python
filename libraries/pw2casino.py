@@ -58,6 +58,8 @@ class pw2casino:
         k_grid = self.dft.input_k_points.values()
 
         kpoint_s = 'k-point # ; # of bands (up spin/down spin);            k-point coords (au)'
+        kpoint_s=kpoint_s.split()
+
         k_list = []
         header = []
         new = True
@@ -68,17 +70,16 @@ class pw2casino:
         first=True
         with open(self.bwfn) as f:
             for line in f:
+                line = line.split()
                 if first:
-                    print line
-                    if line.split() == kpoint_s:
-
+                    if line == kpoint_s:
                         first=False
                     else:
                         header += line
                 else:
-                    if line.split() == kpoint_s.split():
+                    if line == kpoint_s:
                         new=True
-                        k_info = line.split()
+                        k_info = line
                         k_list.append(
                             kpoints(num=k_info[0], nbnds_up=k_info[1], nbnds_down=k_info[2], coords=k_info[3:]))
 
