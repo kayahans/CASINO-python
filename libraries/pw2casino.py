@@ -57,8 +57,6 @@ class pw2casino:
         sys_dir = self.dft.system.rundir
         structure = self.dft.system.structure
         k_grid = self.dft.input_k_points.values()
-        print self.xml.up_nelect
-        print len(self.xml.up_nelect)
 
         kpoint_s = 'k-point # ; # of bands (up spin/down spin);            k-point coords (au)'
         kpoint_s=kpoint_s.split()
@@ -82,7 +80,7 @@ class pw2casino:
         nscell = self.dft.system.scell_size
         after_kpts_str = False
 
-        print "Supercell determinant is=" + str(nscell)
+        print "Supercell determinant is " + str(nscell)
 
         with open(self.bwfn) as f:
             with open(self.rundir + '/summary.txt', 'w') as g:
@@ -96,7 +94,7 @@ class pw2casino:
                             header += ' '.join(line) + '\n'
                         elif count == True:
                             numkpts = int(str(line[0])) / nscell
-                            print "Number of k-points=" + str(numkpts*nscell)
+                            print "Number of k-points " + str(numkpts*nscell)
                             print "Will print " + str(numkpts) + " files"
                             files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts+1)]
                             count = False
