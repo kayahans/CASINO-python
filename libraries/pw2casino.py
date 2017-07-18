@@ -94,7 +94,8 @@ class pw2casino:
                             header += ' '.join(line) + '\n'
                         elif count == True:
                             numkpts = int(str(line[0])) / nscell
-                            print "Number of k-points=" + str(numkpts)
+                            print "Number of k-points=" + str(numkpts*nscell)
+                            print "Will print " + str(numkpts) + " files"
                             files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts+1)]
                             count = False
                             header += ' '.join('\t' + str(self.dft.system.scell_size) + '\n')
@@ -110,7 +111,6 @@ class pw2casino:
                             sys.stdout.flush()
 
                             index += 1
-                            print index
                             for item in header:
                                 files[index % numkpts- 1].write(item)
 
