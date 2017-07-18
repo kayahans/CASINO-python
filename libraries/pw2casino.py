@@ -125,7 +125,7 @@ class pw2casino:
 
                         else:
                             new = False
-                            files[index-1].write(line + '\n')
+                            files[index-1].write(str(line) + '\n')
 
 
 
