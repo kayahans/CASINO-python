@@ -95,6 +95,9 @@ class pw2casino:
                             output.write(item)
 
     def control_pw2casino(self):
+        print 'dft complete'
+        print self.dft.rundir
+        print self.dft.complete
 
         if self.dft.complete:
             if os.path.exists(self.rundir):
