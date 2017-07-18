@@ -91,8 +91,8 @@ class pw2casino:
                             count = True
                             header += ' '.join(line) + '\n'
                         elif count == True:
-                            numkpts = int(str(line[0])) / int(self.dft.system.scell_size)
-                            files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts)]
+                            numkpts = int(str(line[0])) / nscell
+                            files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts+1)]
                             count = False
                             header += ' '.join('\t' + str(self.dft.system.scell_size) + '\n')
                             first=False
