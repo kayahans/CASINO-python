@@ -78,7 +78,7 @@ class pw2casino:
                         count=True
                         header+=str(line)+'\n'
                     elif count==True:
-                        numkpts=int(line)
+                        numkpts=line
                         count=False
                         header+=str(self.dft.system.scell_size)+'\n'
                     elif line == kpoint_s:
