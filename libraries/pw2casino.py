@@ -136,7 +136,9 @@ class pw2casino:
                         else:
 
                             files[index % numkpts - 1].write(' '.join(line) + '\n')
-        print ""
+
+        for i in range(1,index+1):
+            files[index-1].close()
 
     def control_pw2casino(self):
 
