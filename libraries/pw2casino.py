@@ -4,7 +4,7 @@ from xml_functions import Pwxml
 import sys
 
 class kpoints:
-    def __init__(self, num=None, nbnds_up=None, nbnds_down=None, neu=None, ned=None, coords=None,start=None, end=None,blips=None):
+    def __init__(self, num=None, nbnds_up=None, nbnds_down=None, neu=None, ned=None, coords=None,blips=None):
         self.num = num
         self.nbnds_up=nbnds_up
         self.nbnds_down=nbnds_down
@@ -67,43 +67,66 @@ class pw2casino:
         first = True
         count=False
         numkpts=0
-        i=0
+        index=0
         print 'Reading pwscf.bwfn.data'
 
         first=True
+
+        if not os.path.exists(self.rundir):
+            os.mkdir(self.rundir)
+
         with open(self.bwfn) as f:
-            for line in f:
-                line = line.split()
-                if first:
-                    if line == 'Number of k-points'.split():
-                        count=True
-                        header+=str(line)+'\n'
-                    elif count==True:
-                        numkpts=int(str(line[0]))
-                        count=False
-                        header+=str(self.dft.system.scell_size)+'\n'
-                    elif line == kpoint_s:
-                        i += 1
-                        prt = (i* 100) / numkpts
-                        sys.stdout.write(str(prt) + ' percent complete'+'\r')
-                        sys.stdout.flush()
-
-                        first=False
+            with open(self.rundir + '/summary.txt', 'w') as g:
+                g.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons')
+                for line in f:
+                    line = line.split()
+                    if first:
+                        if line == 'Number of k-points'.split():
+                            count = True
+                            header += str(line) + '\n'
+                        elif count == True:
+                            numkpts = int(str(line[0]))
+                            count = False
+                            header += '\t' + str(self.dft.system.scell_size) + '\n'
+                        elif line == kpoint_s:
+                            print 'Started writing individial bwfn files'
+                            index+=1
+                            first = False
+                        else:
+                            header += line
                     else:
-                        header += line
-                else:
-                    if line == kpoint_s:
-                        new=True
-                        i += 1
-                        prt = (i * 100) / numkpts
-                        sys.stdout.write(str(prt) + ' percent complete' + '\r')
-                        sys.stdout.flush()
-                        k_info = line
-                        k_list.append(
-                            kpoints(num=k_info[0], nbnds_up=k_info[1], nbnds_down=k_info[2], coords=k_info[3:]))
+                        with open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index), 'w') as output:
+                            if line == kpoint_s:
+                                new = True
+                                prt = (index * 100) / numkpts
+                                sys.stdout.write(str(prt) + ' percent complete' + '\r')
+                                sys.stdout.flush()
 
-                    else:
-                        new=False
+                                index += 1
+                                for item in header:
+                                    output.write(item)
+                                output.write(kpoint_s + '\n')
+                                output.write(
+                                    str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t')
+
+                                self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
+                                header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
+                                self.neu.update(
+                                    {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
+                                self.ned.update(
+                                    {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
+                                g.write(
+                                    'bwfn.{0:0>3}.data'.format(index) + ' ' + str(
+                                        self.xml.up_nelect[index]) + ' ' + str(
+                                        self.xml.down_nelect[index]) + '\n')
+
+
+
+                            else:
+                                new = False
+
+
+
         print header
         print ""
 
