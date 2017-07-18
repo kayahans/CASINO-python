@@ -134,6 +134,7 @@ class pw2casino:
                                 after_kpts_str = True
 
                             elif after_kpts_str:
+                                print line
                                 line[0]=str(1)
                                 files[index - 1].write(' '.join(line) + '\n')
                                 after_kpts_str = False
