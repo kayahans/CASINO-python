@@ -129,7 +129,7 @@ class pw2casino:
                             after_kpts_str = True
 
                         elif after_kpts_str:
-                            line[0] = str(1)
+                            line[0] = str(int(index/(numkpts*nscell)+1))
                             files[index % numkpts- 1].write(' '.join(line) + '\n')
                             after_kpts_str = False
 
