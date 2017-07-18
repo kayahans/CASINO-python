@@ -39,6 +39,7 @@ class pw2casino:
             print self.rundir + ' not ready!'
         else:
             if not self.complete and not self.running:
+                print self.rundir + ' is running now!'
                 self.xml = Pwxml(self.dft.rundir)
                 self.divide_wfn()
                 self.complete=True
