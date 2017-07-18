@@ -86,6 +86,7 @@ class pw2casino:
                         i += 1
                         prt=float(i) / float(numkpts)
                         size_str= str(prt), ' percent complete'
+                        print size_str
                         sys.stdout.write('%s\r' % size_str)
                         sys.stdout.flush()
                         first=False
@@ -97,6 +98,7 @@ class pw2casino:
                         i += 1
                         prt = float(i) / float(numkpts)
                         size_str = str(prt), ' percent complete'
+                        print size_str
                         sys.stdout.write('%s\r' % size_str)
                         sys.stdout.flush()
 
