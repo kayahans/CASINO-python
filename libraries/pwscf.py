@@ -164,8 +164,10 @@ class Pwscf:
         atoms = self.system.structure.species
 
         unique_atoms = set(self.system.structure.species)
+
         if list(t_metals & unique_atoms):
             t_metal_atom = list(t_metals & unique_atoms)[0]
+            unique_atoms=list(unique_atoms)
             t_metal_atom_index = unique_atoms.index(t_metal_atom)
             return t_metal_atom_index
         else:
