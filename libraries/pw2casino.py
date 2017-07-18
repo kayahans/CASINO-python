@@ -84,9 +84,9 @@ class pw2casino:
                         header+=str(self.dft.system.scell_size)+'\n'
                     elif line == kpoint_s:
                         i += 1
-                        prt=float(i) / float(numkpts)
-                        print prt
-                        print '{0} percent complete\r'.format(str(prt)),
+                        prt = i / numkpts * 100
+
+                        print '{0} percent complete\r'.format(prt),
                         first=False
                     else:
                         header += line
@@ -94,9 +94,9 @@ class pw2casino:
                     if line == kpoint_s:
                         new=True
                         i += 1
-                        prt = float(i) / float(numkpts)
+                        prt = i / numkpts * 100
                         print prt
-                        print '{0} percent complete\r'.format(str(prt)),
+                        print '{0} percent complete\r'.format(prt),
 
                         k_info = line
                         k_list.append(
