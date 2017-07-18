@@ -71,17 +71,25 @@ Cartesian
             species += [species_strs[i]] * species_counts[i]
 
         iscartesian = []
-        if lines[7].startswith("C"):
+        if lines[7].startswith("C") or lines[7].startswith("c"):
             iscartesian = True
-        elif lines[7].startswith("R"):
+        elif lines[7].startswith("R") or lines[7].startswith("D") or lines[7].startswith("r") or lines[7].startswith("d"):
             iscartesian = False
         else:
             error("Coordinates are not Cartesian or Reciprocal!")
 
         coords = []
+        if iscartesian:
+            for i in range(8,len(lines)):
 
-        for i in range(8,len(lines)):
-            coords += [[float(x) for x in lines[i].split()]]
+                coords += [[float(x) for x in lines[i].split()[0:3]]]
+        else:
+            for i in range(8,len(lines)):
+                coords += [[float(x) for x in lines[i].split()[0:3]]]
+
+            #Dot product with the lattice, always print Cartesian
+            crd=np.dot(np.array(coords),np.array(lattice))
+            coords=crd.tolist()
 
         return Vasp(comment=comment, scale=scale, struct=structure.Structure(lattice=lattice, species=species, coords=coords), iscartesian=iscartesian)
 
