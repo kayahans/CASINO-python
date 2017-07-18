@@ -64,7 +64,9 @@ class pw2casino:
         header = []
         new = True
         first = True
-
+        count=False
+        numkpts=0
+        i=0
         print 'Reading pwscf.bwfn.data'
 
         first=True
@@ -72,14 +74,24 @@ class pw2casino:
             for line in f:
                 line = line.split()
                 if first:
-                    if line == kpoint_s:
-                        print 'a new one'
+                    if line == 'Number of k-points'.split():
+                        count=True
+                        header+=line+'\n'
+                    elif count==True:
+                        numkpts=int(line)
+                        count=False
+                        header+=str(self.dft.system.scell_size)+'\n'
+                    elif line == kpoint_s:
+                        i += 1
+                        print str(i)+'/'+str(numkpts)
                         first=False
                     else:
                         header += line
                 else:
                     if line == kpoint_s:
                         new=True
+                        i += 1
+                        print str(i) + '/' + str(numkpts)
                         k_info = line
                         k_list.append(
                             kpoints(num=k_info[0], nbnds_up=k_info[1], nbnds_down=k_info[2], coords=k_info[3:]))
