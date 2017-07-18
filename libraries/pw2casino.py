@@ -1,6 +1,7 @@
 import pwscf
 import os
 from xml_functions import Pwxml
+import sys
 
 class kpoints:
     def __init__(self, num=None, nbnds_up=None, nbnds_down=None, neu=None, ned=None, coords=None,start=None, end=None,blips=None):
@@ -78,12 +79,13 @@ class pw2casino:
                         count=True
                         header+=str(line)+'\n'
                     elif count==True:
-                        numkpts=line
+                        numkpts=int(str(line))
                         count=False
                         header+=str(self.dft.system.scell_size)+'\n'
                     elif line == kpoint_s:
                         i += 1
-                        print str(i)+'/'+str(numkpts)
+                        sys.stdout.write(float(i)/float(numkpts))
+                        sys.stdout.flush()
                         first=False
                     else:
                         header += line
@@ -91,7 +93,8 @@ class pw2casino:
                     if line == kpoint_s:
                         new=True
                         i += 1
-                        print str(i) + '/' + str(numkpts)
+                        sys.stdout.write(float(i) / float(numkpts))
+                        sys.stdout.flush()
                         k_info = line
                         k_list.append(
                             kpoints(num=k_info[0], nbnds_up=k_info[1], nbnds_down=k_info[2], coords=k_info[3:]))
