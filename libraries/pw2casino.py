@@ -94,10 +94,27 @@ class pw2casino:
                             print 'Started writing individial bwfn files'
                             index+=1
                             first = False
+                            for item in header:
+                                files[index-1].write(item)
+                            files[index - 1].write(kpoint_s + '\n')
+                            files[index - 1].write(
+                                str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[
+                                    index].nbnds_down + '\t')
+                            self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
+                            header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
+                            self.neu.update(
+                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.up_nelect[index]})
+                            self.ned.update(
+                                {sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index): self.xml.down_nelect[index]})
+                            g.write(
+                                'bwfn.{0:0>3}.data'.format(index) + ' ' + str(
+                                    self.xml.up_nelect[index]) + ' ' + str(
+                                    self.xml.down_nelect[index]) + '\n')
+
                         else:
                             header += line
                     else:
-                        print 'Kayu'
+
                         if line == kpoint_s:
                             new = True
                             prt = (index * 100) / numkpts
@@ -128,6 +145,7 @@ class pw2casino:
 
                         else:
                             new = False
+                            files[index-1].write(line + '\n')
 
 
 
