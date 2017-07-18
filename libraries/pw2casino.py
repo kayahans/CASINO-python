@@ -81,11 +81,11 @@ class pw2casino:
                 g.write('# twist_wavefunction_name number_of_spin_up_electrons number_of_spin_down_electrons')
                 for line in f:
                     line = line.split()
-                    line = str(line)
+
                     if first:
                         if line == 'Number of k-points'.split():
                             count = True
-                            header += ' '.join(line + '\n')
+                            header += ' '.join(line) + '\n'
                         elif count == True:
                             numkpts = int(str(line[0]))
                             files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts)]
@@ -108,7 +108,7 @@ class pw2casino:
                             for item in header:
                                 files[index-1].write(item)
 
-                            files[index - 1].write(' '.join(str(kpoint_s) + '\n') )
+                            files[index - 1].write(' '.join(kpoint_s) + '\n')
                             #files[index - 1].write(str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[index].nbnds_down + '\t' + '\n')
 
                             self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
@@ -126,11 +126,7 @@ class pw2casino:
 
                         else:
                             new = False
-                            files[index-1].write(line + '\n')
-
-
-
-
+                            files[index-1].write(' '.join(line) + '\n')
 
         print header
         print ""
