@@ -20,7 +20,7 @@ for scell in [1,2,4,8]:
         source="icsd",
         supercell_size=scell,
         folded=True,
-        real_or_complex='Real',
+        real_or_complex='Complex',
         mindistance=16
         #real_or_complex='Real'
     )
