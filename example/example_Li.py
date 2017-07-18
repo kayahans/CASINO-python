@@ -1,10 +1,9 @@
 #! /usr/bin/env python
-from casino_python import settings,System
-from pwscf import generate_pwscf
 from casino import generate_casino
-from analyze_results import results
-from pw2casino import  pw2casino
+from casino_python import settings,System
 from machines import Job
+from pw2casino import  pw2casino
+from pwscf import generate_pwscf
 
 settings(rootdir="./",
          pspdir="./Psps",

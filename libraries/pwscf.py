@@ -185,7 +185,7 @@ class Pwscf:
                 if key is 'header':
                     pass
                 else:
-                    f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
+                    f.write("{0:30} = {1} \n".format(str(key), str(value)))
             f.write("/" + "\n")
 
             # Write System Block
@@ -198,7 +198,7 @@ class Pwscf:
                     key='starting_magnetization({0})'.format(self.transition_metal())
                     f.write("{0:30} = {1} \n".format(key, str(value)))
                 else:
-                    f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
+                    f.write("{0:30} = {1} \n".format(str(key), str(value)))
             f.write("/" + "\n")
 
             # Write Electrons Block
@@ -208,7 +208,7 @@ class Pwscf:
                 if key is 'header':
                     pass
                 else:
-                    f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
+                    f.write("{0:30} = {1} \n".format(str(key), str(value)))
             f.write("/" + "\n")
 
             # Write CELL_PARAMETERS Block
@@ -224,7 +224,7 @@ class Pwscf:
                                                             str(format(row[2], '.10f'))) + '\n')
 
                 else:
-                    f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
+                    f.write("{0:30} = {1} \n".format(str(key), str(value)))
             f.write("\n")
 
             # Write ATOMIC SPECIES BLOCK
@@ -237,7 +237,7 @@ class Pwscf:
                     for row in value:
                         f.write('{0:5}  {1:15}  {2:15}'.format(row[0], str(format(row[1], '.10f')), row[2]) + '\n')
                 else:
-                    f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
+                    f.write("{0:30} = {1} \n".format(str(key), str(value)))
             f.write("\n")
 
             # Write Atomic Positiostarting_magnetizationns Block
@@ -253,7 +253,7 @@ class Pwscf:
                                                                 str(format(row[1][1], '.10f')),
                                                                 str(format(row[1][2], '.10f'))) + '\n')
                 else:
-                    f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
+                    f.write("{0:30} = {1} \n".format(str(key), str(value)))
             f.write("\n")
 
             # Write K POINTS Block
@@ -274,7 +274,7 @@ class Pwscf:
                     # for row in value:
                     # f.write('{0:15} {1:15} {2:15} {3:15}'.format(str(format(row[0], '.10f')), str(format(row[1], '.10f')), str(format(row[2], '.10f')), str(format(kgrid_weights, '.10f'))) + '\n')
                 else:
-                    f.write("{0:30} = '{1}' \n".format(str(key), str(value)))
+                    f.write("{0:30} = {1} \n".format(str(key), str(value)))
             f.write("\n")
 
     def control_pwscf(self):
