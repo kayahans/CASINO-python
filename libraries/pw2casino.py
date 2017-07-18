@@ -97,7 +97,8 @@ class pw2casino:
                             first = False
                             for item in header:
                                 files[index-1].write(item)
-                                files[index - 1].write(' '.join(str(kpoint_s) + '\n'))
+
+                            files[index - 1].write(' '.join(str(kpoint_s) + '\n'))
                             files[index - 1].write(
                                 str(self.dft.system.scell_size) + '\t' + k_list[index].nbnds_up + '\t' + k_list[
                                     index].nbnds_down + '\t' + '\n')
