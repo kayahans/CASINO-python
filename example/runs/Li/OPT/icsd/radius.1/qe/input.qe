@@ -1,25 +1,25 @@
 &CONTROL
-calculation                    = 'scf' 
-pseudo_dir                     = '/Users/kayahan/PycharmProjects/CASINO-python/example/runs/Li/OPT/psps' 
-wf_collect                     = 'True' 
-title                          = 'generic.qe' 
+calculation                    = scf 
+pseudo_dir                     = /Users/kayahan/PycharmProjects/CASINO-python/example/runs/Li/OPT/psps 
+wf_collect                     = True 
+title                          = generic.qe 
 /
 &SYSTEM
-nspin                          = 2 
-ecutwfc                        = 120 
+nspin                          = '2' 
+ecutwfc                        = '120' 
 input_dft                      = 'lda' 
 nosym_evc                      = 'True' 
 noinv                          = 'True' 
 occupations                    = 'smearing' 
-ibrav                          = 0 
+ibrav                          = '0' 
 nosym                          = 'True' 
-degauss                        = 0.02 
+degauss                        = '0.02' 
 starting_magnetization(1)      = 0.7 
-nat                            = 2 
-ntyp                           = 1 
+nat                            = '2' 
+ntyp                           = '1' 
 /
 &ELECTRONS
-electron_maxstep               = 500 
+electron_maxstep               = '500' 
 startingwfc                    = 'random' 
 /
 CELL_PARAMETERS angstrom

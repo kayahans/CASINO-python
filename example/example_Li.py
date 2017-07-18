@@ -27,7 +27,7 @@ for scell in [1,2,4,8]:
     scf = generate_pwscf(
         system = generic,
         input_dft = 'lda',
-        job=Job(nodes=2,time=12,name='dft',app='pwscf.x -pw2casino')
+        job=Job(nodes=2,time=12,name='dft',app='/home/apps/espresso-5.0.3/bin/pw.x -pw2casino')
 
     )
     psi = pw2casino(
