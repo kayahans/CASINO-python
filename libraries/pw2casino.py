@@ -69,7 +69,9 @@ class pw2casino:
         with open(self.bwfn) as f:
             for line in f:
                 if first:
+                    print line
                     if line.split() == kpoint_s:
+
                         first=False
                     else:
                         header += line
