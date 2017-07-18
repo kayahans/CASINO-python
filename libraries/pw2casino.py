@@ -84,7 +84,7 @@ class pw2casino:
                     if first:
                         if line == 'Number of k-points'.split():
                             count = True
-                            header += ' '.join(str(line) + '\n')
+                            header += ' '.join(line + '\n')
                         elif count == True:
                             numkpts = int(str(line[0]))
                             files = [open(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(x), 'w') for x in range(1, numkpts)]
@@ -93,7 +93,7 @@ class pw2casino:
                             first=False
 
                         else:
-                            header += ' '.join(str(line) + '\n')
+                            header += ' '.join(line)+ '\n'
                     else:
                         print files
                         if line == kpoint_s:
@@ -125,7 +125,7 @@ class pw2casino:
 
                         else:
                             new = False
-                            files[index-1].write(str(line) + '\n')
+                            files[index-1].write(line + '\n')
 
 
 
