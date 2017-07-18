@@ -126,7 +126,7 @@ class Pwscf:
         awp = []
         max_ecut = -1
 
-        for specie in unique_atoms:  # Check here later
+        for specie in unique_atoms:
             if not os.listdir(system.runpspdir) == []:
                 for file in os.listdir(system.runpspdir):
 
@@ -168,7 +168,7 @@ class Pwscf:
         if list(t_metals & unique_atoms):
             t_metal_atom = list(t_metals & unique_atoms)[0]
             unique_atoms=list(unique_atoms)
-            t_metal_atom_index = unique_atoms.index(t_metal_atom)
+            t_metal_atom_index = int(unique_atoms.index(t_metal_atom)) + 1
             return t_metal_atom_index
         else:
             return 1
