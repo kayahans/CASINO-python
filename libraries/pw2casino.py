@@ -67,7 +67,7 @@ class pw2casino:
 
         count=False
         numkpts=0
-        index=0
+        index=-1
         files=[]
         print 'Reading pwscf.bwfn.data'
 
@@ -104,6 +104,9 @@ class pw2casino:
                         else:
                             header += ' '.join(line)+ '\n'
                     else:
+                        index += 1
+                        filenum=((index+1) % numkpts) - 1
+
                         if line == kpoint_s:
 
                             prt = int((index * 100) / (numkpts*nscell))
@@ -112,9 +115,9 @@ class pw2casino:
 
 
                             for item in header:
-                                files[((index+1) % numkpts) - 1].write(item)
+                                files[filenum].write(item)
 
-                            files[((index+1) % numkpts) - 1].write(' '.join(kpoint_s) + '\n')
+                            files[filenum].write(' '.join(kpoint_s) + '\n')
 
                             self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
                             header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
@@ -128,16 +131,18 @@ class pw2casino:
                                     self.xml.down_nelect[index]) + '\n')
                             after_kpts_str = True
 
+
+
                         elif after_kpts_str:
                             line[0] = str(int(index/(numkpts*nscell)+1))
-                            files[((index+1) % numkpts) - 1].write(' '.join(line) + '\n')
+                            files[filenum].write(' '.join(line) + '\n')
                             after_kpts_str = False
 
                         else:
 
-                            files[(index+1) % numkpts - 1].write(' '.join(line) + '\n')
+                            files[filenum].write(' '.join(line) + '\n')
 
-                        index += 1
+
 
         for i in range(1,index+1):
             files[index-1].close()
