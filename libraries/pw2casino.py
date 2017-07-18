@@ -104,20 +104,19 @@ class pw2casino:
                         else:
                             header += ' '.join(line)+ '\n'
                     else:
-                        index += 1
-                        filenum=((index+1) % numkpts) - 1
 
                         if line == kpoint_s:
 
+                            index += 1
                             prt = int((index * 100) / (numkpts*nscell))
                             sys.stdout.write(str(prt) + ' percent complete' + '\r')
                             sys.stdout.flush()
 
 
                             for item in header:
-                                files[filenum].write(item)
+                                files[((index+1) % numkpts) - 1].write(item)
 
-                            files[filenum].write(' '.join(kpoint_s) + '\n')
+                            files[((index+1) % numkpts) - 1].write(' '.join(kpoint_s) + '\n')
 
                             self.twists.append(sys_dir + '/qe_wfns/bwfn.{0:0>3}.data'.format(index))
                             header[0] = 'bwfn.{0:0>3}.data'.format(index) + '\t' + self.dft.input_control["title"]
@@ -135,12 +134,12 @@ class pw2casino:
 
                         elif after_kpts_str:
                             line[0] = str(int(index/(numkpts*nscell)+1))
-                            files[filenum].write(' '.join(line) + '\n')
+                            files[((index+1) % numkpts) - 1].write(' '.join(line) + '\n')
                             after_kpts_str = False
 
                         else:
 
-                            files[filenum].write(' '.join(line) + '\n')
+                            files[((index+1) % numkpts) - 1].write(' '.join(line) + '\n')
 
 
 
