@@ -127,13 +127,14 @@ class Pwscf:
         max_ecut = -1
 
         for specie in unique_atoms:
-            if not os.listdir(system.runpspdir) == []:
+            if os.listdir(system.runpspdir) != []:
                 for file in os.listdir(system.runpspdir):
-
                     if fnmatch.fnmatch(file, specie + '*'):
                         awp.append([str(specie), atomic_weight(specie), file])
+                        break
                     else:
                         awp.append([str(specie), atomic_weight(specie), specie + "." + settings.pspname + ".upf"])
+                        break
             else:
                 awp.append([str(specie), atomic_weight(specie), specie + "." + settings.pspname + ".upf"])
 
