@@ -85,10 +85,7 @@ class pw2casino:
                     elif line == kpoint_s:
                         i += 1
                         prt=float(i) / float(numkpts)
-                        size_str= str(prt), ' percent complete'
-                        print size_str
-                        sys.stdout.write('%s\r' % size_str)
-                        sys.stdout.flush()
+                        print '{0} percent complete\r'.format(str(prt)),
                         first=False
                     else:
                         header += line
@@ -97,10 +94,7 @@ class pw2casino:
                         new=True
                         i += 1
                         prt = float(i) / float(numkpts)
-                        size_str = str(prt), ' percent complete'
-                        print size_str
-                        sys.stdout.write('%s\r' % size_str)
-                        sys.stdout.flush()
+                        print '{0} percent complete\r'.format(str(prt)),
 
                         k_info = line
                         k_list.append(
