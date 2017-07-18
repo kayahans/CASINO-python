@@ -31,20 +31,24 @@ class pw2casino:
 
         self.complete=False
         self.running=False
+        self.dependencies=True
 
         self.control_pw2casino()
 
-        if not self.complete:
-            self.xml = Pwxml(self.dft.rundir)
-            self.divide_wfn()
-            self.complete=True
+        if self.dependencies:
+            print self.rundir + ' not ready!'
         else:
-            with open(self.rundir+'/summary.txt', 'r') as f:
-                for line in f:
-                    if not line.startswith("#"):
-                        self.neu.update({self.dft.system.rundir + '/qe_wfns/{0}'.format(line.split()[0]): line.split()[1]})
-                        self.ned.update({self.dft.system.rundir + '/qe_wfns/{0}'.format(line.split()[0]): line.split()[2]})
-                        self.twists.append(self.dft.system.rundir + '/qe_wfns/{0}'.format(line.split()[0]))
+            if not self.complete and not self.running:
+                self.xml = Pwxml(self.dft.rundir)
+                self.divide_wfn()
+                self.complete=True
+            else:
+                with open(self.rundir+'/summary.txt', 'r') as f:
+                    for line in f:
+                        if not line.startswith("#"):
+                            self.neu.update({self.dft.system.rundir + '/qe_wfns/{0}'.format(line.split()[0]): line.split()[1]})
+                            self.ned.update({self.dft.system.rundir + '/qe_wfns/{0}'.format(line.split()[0]): line.split()[2]})
+                            self.twists.append(self.dft.system.rundir + '/qe_wfns/{0}'.format(line.split()[0]))
 
     def divide_wfn(self):
         sys_dir = self.dft.system.rundir
@@ -95,11 +99,9 @@ class pw2casino:
                             output.write(item)
 
     def control_pw2casino(self):
-        print 'dft complete'
-        print self.dft.rundir
-        print self.dft.complete
 
         if self.dft.complete:
+            self.dependencies=False
             if os.path.exists(self.rundir):
                 if os.path.exists(self.dft.rundir+'/pwscf.bwfn.data'):
                     if len(os.listdir(self.rundir)) > 8:
