@@ -57,6 +57,7 @@ class pw2casino:
         sys_dir = self.dft.system.rundir
         structure = self.dft.system.structure
         k_grid = self.dft.input_k_points.values()
+        print self.xml.up_nelect
 
         kpoint_s = 'k-point # ; # of bands (up spin/down spin);            k-point coords (au)'
         kpoint_s=kpoint_s.split()
