@@ -37,7 +37,7 @@ class pw2casino:
         self.control_pw2casino()
 
         if self.dependencies:
-            print self.rundir + ' not ready!'
+            pass
         else:
             if not self.complete and not self.running:
                 print self.rundir + ' is running now!'

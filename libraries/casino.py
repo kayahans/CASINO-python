@@ -117,6 +117,9 @@ class Casino:
         self.complete = False
         self.qmc_inputs=[]
 
+        if self.dft.system.real_or_complex == 'Complex':
+            self.kwargs.update({'complex_wf':True})
+
         if qmc_prev is None:
             # Then, no DMC calculation is performed until now, so perform VMC
             self.kwargs.update({'opt_jastrow': True})
