@@ -120,14 +120,14 @@ class Casino:
         self.job = job
         self.rundir = []
 
-        if qmc == 'vmc_opt' or qmc == 'vmc_dmc' or qmc == None:
+        if qmc == 'vmc_opt':
+            self.rundir = self.dft.system.rundir + '/vmc'
             self.qmc = qmc
-            if qmc == 'vmc_opt' or qmc == None:
-                self.rundir=self.dft.system.rundir + '/vmc'
-            else:
-                self.rundir=self.dft.system.rundir + '/dmc'
+        elif qmc == 'vmc_dmc':
+            self.rundir = self.dft.system.rundir + '/dmc'
+            self.qmc = qmc
         else:
-            raise ValueError, 'qmc should be either "vmc_opt" or "vmc_dmc" '
+            raise ValueError, 'qmc should be either "vmc_opt", "vmc_dmc"'
 
         self.kwargs = kwargs
 
