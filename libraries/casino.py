@@ -37,7 +37,7 @@ default_qmc_run =dict(
     timing_info=False,                  #*! Activate subroutine timers (Boolean)
     esupercell=False,                   #*! Energy/supercell in output (Boolean)
     neighprint=0,                       #*! Neighbour analysis (Integer)
-    mpc_cutoff=30,                      #*! G vector cutoff for MPC (Physical)
+    mpc_cutoff='30.d0 hartree',                      #*! G vector cutoff for MPC (Physical)
     finite_size_corr=False,             #*! Eval. finite size correction (Boolean)
     forces=False,                       #*! Evaluate forces on atoms (Boolean)
 )
