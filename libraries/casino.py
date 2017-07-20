@@ -446,6 +446,9 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
 
     def can_run_casino(self):
 
+        self.running=False
+        self.dependencies_complete=False
+
         if self.qmc_prev == None:
             qmc_prev_complete = True
         else:
