@@ -116,6 +116,9 @@ class Casino:
         # Inputs
         self.dft = dft
         self.psi = psi
+        print self.psi.neu
+        print self.psi.ned
+        print self.psi.bwfn
         self.qmc_prev = qmc_prev
         self.job = job
         self.rundir = []
@@ -509,7 +512,7 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
         with open(script_name, 'w') as f:
             f.write(self.job.script)
 
-        os.system(self.job.run_command + " " + script_name)
+        #os.system(self.job.run_command + " " + script_name)
         os.chdir(cur_dir)
 
 def generate_casino(**kwargs):
