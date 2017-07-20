@@ -146,6 +146,17 @@ class pw2casino:
         for i in range(1,index+1):
             files[index-1].close()
 
+    def execute(self):
+        cur_dir=os.getcwd()
+        os.chdir(self.rundir)
+        script_name='job.'+self.job.name+'.sh'
+        with open(script_name, 'w') as f:
+            f.write(self.job.script)
+
+
+        os.system(self.job.run_command + " " + script_name)
+        os.chdir(cur_dir)
+
     def control_pw2casino(self):
 
         if self.dft.complete:

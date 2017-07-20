@@ -13,7 +13,7 @@ settings(rootdir="./",
          )
 
 
-for scell in [1,2,4,8]:
+for scell in [1,2]:
     generic = System(
         name="Li",
         structdir="./Structs",
