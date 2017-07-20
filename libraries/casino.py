@@ -263,8 +263,13 @@ class Casino:
                         f.write(str(key)+' = '+str(item[key])+'\n')
                 if first:
                     f.write('\n')
+                    scell=self.system.scell
+                    if len(scell) == 3:
+                        scell = np.array([[scell[0], 0, 0], [0, scell[1], 0], [0, 0, scell[2]]])
+                    elif len(scell) == 9:
+                        scell = np.array(scell)
                     f.write("%block scell_matrix\n")
-                    f.write(' '.join(map(str, self.system.scell))+'\n')
+                    np.savetxt(f, scell, fmt='%-10.6f')
                     f.write("%endblock scell_matrix\n")
                     first=False
                 f.write('\n')
