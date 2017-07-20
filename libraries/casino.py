@@ -116,6 +116,7 @@ class Casino:
         # Inputs
         self.dft = dft
         self.psi = psi
+        print psi.bwfn
         self.qmc_prev = qmc_prev
         self.job = job
         self.rundir = []
