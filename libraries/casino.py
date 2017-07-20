@@ -265,7 +265,7 @@ class Casino:
                     f.write('\n')
                     f.write("%block scell_matrix\n")
                     f.write(' '.join(map(str, self.system.scell))+'\n')
-                    f.write("%block scell_matrix\n")
+                    f.write("%endblock scell_matrix\n")
                     first=False
                 f.write('\n')
 
