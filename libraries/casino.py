@@ -3,7 +3,7 @@ from error_handler import error, warning
 from pwscf import Pwscf
 from pw2casino import pw2casino
 import fnmatch
-from collections import Counter
+
 
 # Input files are grouped into five
 # default_qmc_system
@@ -245,8 +245,7 @@ class Casino:
     def write_correlation(self):
 
         structure = self.dft.system.structure
-        c = Counter(structure.species)
-
+        unique_atoms = list(set(structure.species))
         correlation_head='''START JASTROW
  Title
    Simple Jastrow
@@ -270,19 +269,21 @@ class Casino:
         correlation_chi_header = '''
 START CHI TERM
 Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
-    {NSETS} 1'''.format(NSETS=len(c.keys()))
+    {NSETS} 1'''.format(NSETS=len(unique_atoms))
         correlation_chi_tail = " END CHI TERM\n"
         correlation_f_header = '''
 START F TERM
 Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
-    {NSETS} 1'''.format(NSETS=len(c.keys()))
+    {NSETS} 1'''.format(NSETS=len(unique_atoms))
         correlation_f_tail = " END F TERM\n"
 
         correlation_f = []
         correlation_chi = []
 
-        for index, atom in enumerate(c.keys()):
+        for index, atom in enumerate(unique_atoms):
             atom_labels=' '.join([str(i+1) for i,val in enumerate(structure.species) if val==atom])
+            natoms=(len(atom_labels)+1)/2
+
             correlation_chi +="""START SET {SET_NUM}
  Spherical harmonic l,m
    0 0
@@ -299,7 +300,7 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
  Cutoff (a.u.)     ;  Optimizable (0=NO; 1=YES)
    0.d0                            1
  Parameter values  ;  Optimizable (0=NO; 1=YES)
- END SET {SET_NUM}""".format(SET_NUM=index+1, NUM_ATOMS=c.values()[index], ATOM_LABELS=atom_labels, ORDER=8)
+ END SET {SET_NUM}""".format(SET_NUM=index+1, NUM_ATOMS=natoms, ATOM_LABELS=atom_labels, ORDER=8)
 
         correlation_f+="""START SET {SET_NUM}
  Number of atoms in set
@@ -319,7 +320,7 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
  Cutoff (a.u.)     ;  Optimizable (0=NO; 1=YES)
    0.d0                            1
  Parameter values  ;  Optimizable (0=NO; 1=YES)
- END SET {SET_NUM}""".format(SET_NUM=index+1, NUM_ATOMS=c.values()[index], ATOM_LABELS=atom_labels, ORDER=3)
+ END SET {SET_NUM}""".format(SET_NUM=index+1, NUM_ATOMS=natoms, ATOM_LABELS=atom_labels, ORDER=3)
 
         correlation_p='''
  START P TERM
