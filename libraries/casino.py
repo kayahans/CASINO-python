@@ -118,9 +118,14 @@ class Casino:
         self.psi = psi
         self.qmc_prev = qmc_prev
         self.job = job
+        self.rundir = []
 
         if qmc == 'vmc_opt' or qmc == 'vmc_dmc' or qmc == None:
             self.qmc = qmc
+            if qmc == 'vmc_opt' or qmc == None:
+                self.rundir=self.dft.system.rundir + '/vmc'
+            else:
+                self.rundir=self.dft.system.rundir + '/dmc'
         else:
             raise ValueError, 'qmc can be either "vmc_opt" or "vmc_dmc" '
 
@@ -131,20 +136,20 @@ class Casino:
         self.kwargs.update({'scell_num': self.system.scell_size})
         self.qmc_inputs = []
 
+
+
         self.dependencies = False
         self.running = False
         self.complete = False
 
         self.control_casino()
 
-        if not self.running and not self.complete and not self.dependencies:
+        if not self.running and not self.complete and self.dependencies_complete:
             if self.dft.system.real_or_complex == 'Complex':
                 self.kwargs.update({'complex_wf': True})
 
             if qmc_prev is None:
                 # Then, no DMC calculation is performed until now, so perform VMC
-                self.rundir = self.dft.system.rundir + '/vmc'
-
                 if not os.path.exists(self.rundir):
                     os.mkdir(self.rundir)
 
@@ -161,8 +166,6 @@ class Casino:
                     if self.qmc == "vmc_opt":
                         # Copying the correlation data file from a smaller cell vmc_opt file
 
-                        self.rundir = self.dft.system.rundir + '/vmc'
-
                         if not os.path.exists(self.rundir):
                             os.mkdir(self.rundir)
 
@@ -175,8 +178,6 @@ class Casino:
                     elif self.qmc == "vmc_dmc":
                         # Previous calculation is VMC, then, this is a DMC calculation, jastrow already optimized
 
-                        self.rundir = self.dft.system.rundir + '/dmc'
-
                         if not os.path.exists(self.rundir):
                             os.mkdir(self.rundir)
 
@@ -188,12 +189,9 @@ class Casino:
 
             if self.qmc == 'vmc_opt':
 
-
-                    if not os.path.exists(self.rundir):
-                        os.mkdir(self.rundir)
-                        for file in os.listdir(self.system.runpspdir):
-                            if fnmatch.fnmatch(file, '*_pp.data'):
-                                os.symlink(self.system.runpspdir + '/' + file, self.rundir)
+                    for file in os.listdir(self.system.runpspdir):
+                        if fnmatch.fnmatch(file, '*_pp.data'):
+                            os.symlink(self.system.runpspdir + '/' + file, self.rundir)
 
                     ran_num = 2
                     filename = self.dft.system.rundir + '/qe_wfns/bwfn.{0:0>3}.data'.format(ran_num)
@@ -239,8 +237,15 @@ class Casino:
                         self.write_casino_inputs(self.rundir + '/{0:0>3}'.format(num))
 
 
-        elif self.running:
+        elif not self.dependencies_complete:
             print self.rundir + ' dependencies are not complete'
+        elif self.running:
+            print self.rundir + ' is still running'
+        elif self.complete:
+            print self.rundir + ' is running'
+
+
+
     def process_casino_inputs(self):
 
         qmc_inputs=copy.copy(self.qmc_defaults)
@@ -457,11 +462,12 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
     def control_casino(self):
 
         if not self.psi.complete or not self.qmc_prev.complete:
-            self.dependencies=False
+            self.dependencies_complete=False
             self.running=False
             self.complete=False
+
         else:
-            self.dependencies=True
+            self.dependencies_complete=True
             if os.path.exists(self.outputfile):
                 self.running = True
                 with open(self.outputfile) as f:

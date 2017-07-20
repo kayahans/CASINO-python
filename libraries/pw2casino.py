@@ -30,12 +30,12 @@ class pw2casino:
 
         self.complete = False
         self.running = False
-        self.dependencies = True
+        self.dependencies_complete = False
 
         self.control_pw2casino()
 
-        if self.dependencies:
-            pass
+        if not self.dependencies_complete:
+            print self.rundir + ' dependencies are not complete!'
         else:
             if not self.complete and not self.running:
                 print self.rundir + ' is running now!'
@@ -158,7 +158,7 @@ class pw2casino:
     def control_pw2casino(self):
 
         if self.dft.complete:
-            self.dependencies=False
+            self.dependencies_complete=True
             if os.path.exists(self.rundir):
                 if os.path.exists(self.dft.rundir+'/pwscf.bwfn.data'):
                     if len(os.listdir(self.rundir)) > 8:
