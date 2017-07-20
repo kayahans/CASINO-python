@@ -461,6 +461,9 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
 
     def control_casino(self):
 
+        if self.qmc_prev == None:
+            self.qmc_prev.complete = True
+
         if not self.psi.complete or not self.qmc_prev.complete:
             self.dependencies_complete=False
             self.running=False
