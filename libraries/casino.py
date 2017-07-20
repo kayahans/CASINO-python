@@ -136,15 +136,10 @@ class Casino:
         self.kwargs.update({'scell_num': self.system.scell_size})
         self.qmc_inputs = []
 
-
-
-        self.dependencies = False
-        self.running = False
         self.complete = False
 
-        self.control_casino()
+        if self.can_run_casino():
 
-        if not self.running and not self.complete and self.dependencies_complete:
             if self.dft.system.real_or_complex == 'Complex':
                 self.kwargs.update({'complex_wf': True})
 
@@ -235,16 +230,6 @@ class Casino:
 
                         self.process_casino_inputs()
                         self.write_casino_inputs(self.rundir + '/{0:0>3}'.format(num))
-
-
-        elif not self.dependencies_complete:
-            print self.rundir + ' dependencies are not complete'
-        elif self.running:
-            print self.rundir + ' is still running'
-        elif self.complete:
-            print self.rundir + ' is running'
-
-
 
     def process_casino_inputs(self):
 
@@ -459,7 +444,7 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
                         else:
                             f.write(''.join(line))
 
-    def control_casino(self):
+    def can_run_casino(self):
 
         if self.qmc_prev == None:
             qmc_prev_complete = True
@@ -473,16 +458,40 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
 
         else:
             self.dependencies_complete=True
-            if os.path.exists(self.outputfile):
+            if os.path.exists(self.rundir):
                 self.running = True
-                with open(self.outputfile) as f:
-                    for line in f:
-                        if line.strip() == 'FINAL RESULT:':
-                            self.complete = True
-                            self.running = False
-                            break
-                        else:
-                            self.complete = False
+                if self.qmc == 'vmc_opt':
+                    with open(self.rundir + '/out') as f:
+                        for line in f:
+                            if line.strip() == 'FINAL RESULT:':
+                                self.complete = True
+                                self.running = False
+                                break
+                            else:
+                                self.complete = False
+                elif self.qmc == 'vmc_dmc':
+                    for file in os.listdir(self.rundir):
+                        with open(file + '/out') as f:
+                            for line in f:
+                                if line.strip() == 'FINAL RESULT:':
+                                    self.complete = True
+                                    self.running = False
+                                    break
+                                else:
+                                    self.complete = False
+
+        if not self.dependencies_complete:
+            print self.rundir + ' dependencies are not complete'
+            return False
+        elif self.running:
+            print self.rundir + ' is still running'
+            return False
+        elif self.complete:
+            print self.rundir + ' is complete'
+            return False
+        else:
+            return True
+
 
 
     def execute(self):
