@@ -11,8 +11,6 @@ class kpoints:
         self.neu=neu,
         self.ned=ned,
         self.coords=coords
-        self.start=start
-        self.end=end
         self.blips=blips
 
 class pw2casino:

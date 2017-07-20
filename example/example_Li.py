@@ -13,36 +13,57 @@ settings(rootdir="./",
          )
 
 
-for scell in [1,2]:
-    generic = System(
+
+generic = System(
         name="Li",
         structdir="./Structs",
         source="icsd",
-        supercell_size=scell,
+        supercell_size=1,
         folded=True,
         real_or_complex='Complex',
         mindistance=16
         #real_or_complex='Real'
     )
-    scf = generate_pwscf(
+scf = generate_pwscf(
         system = generic,
         input_dft = 'lda',
         job=Job(nodes=2,time=12,name='dft',app='/home/apps/espresso-5.0.3/bin/pw.x -pw2casino')
 
     )
-    psi = pw2casino(
+psi = pw2casino(
         dft=scf
     )
-    vmc = generate_casino(
+vmc = generate_casino(
         dft=scf,
         psi=psi,
         qmc_prev=None,
         job=Job(nodes=8, time=12, name='vmc', app='casino')
     )
-    dmc = generate_casino(
+
+generic2 = System(
+        name="Li",
+        structdir="./Structs",
+        source="icsd",
+        supercell_size=2,
+        folded=True,
+        real_or_complex='Complex',
+        mindistance=16
+        #real_or_complex='Real'
+    )
+scf2 = generate_pwscf(
+        system = generic2,
+        input_dft = 'lda',
+        job=Job(nodes=2,time=12,name='dft',app='/home/apps/espresso-5.0.3/bin/pw.x -pw2casino')
+
+    )
+psi2 = pw2casino(
+        dft=scf2
+    )
+vmc2 = generate_casino(
         dft=scf,
         psi=psi,
         qmc_prev=vmc,
-        job=Job(nodes=80, time=12, name='vmc', app='casino')
+        qmc='vmc_opt',
+        job=Job(nodes=8, time=12, name='vmc', app='casino')
     )
 
