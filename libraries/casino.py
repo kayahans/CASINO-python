@@ -466,7 +466,7 @@ Number of sets ; labelling (1->atom in s. cell; 2->atom in p. cell; 3->species)
         else:
             qmc_prev_complete=self.qmc_prev.complete
 
-        if not self.psi.complete or not self.qmc_prev_complete:
+        if not self.psi.complete or not qmc_prev_complete:
             self.dependencies_complete=False
             self.running=False
             self.complete=False
