@@ -191,8 +191,6 @@ class Casino:
 
                     ran_num = 2
                     filename = self.dft.system.rundir + '/qe_wfns/bwfn.{0:0>3}.data'.format(ran_num)
-                    print self.psi.neu[filename]
-                    print self.psi.ned[filename]
                     self.kwargs.update({'neu': self.psi.neu[filename]})
                     self.kwargs.update({'ned': self.psi.ned[filename]})
                     self.process_casino_inputs()
