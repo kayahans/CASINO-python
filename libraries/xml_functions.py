@@ -91,7 +91,7 @@ def get_energies(filename=None):
 
     occ_arr = np.asarray(list)
 
-    nelect=(occ_arr > 0.5).sum()
+    nelect=(occ_arr > 0.7).sum()
 
     k_point_energy = np.dot(eig_arr, occ_arr)
     return k_point_energy,nelect
