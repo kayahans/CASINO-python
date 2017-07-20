@@ -104,7 +104,7 @@ default_jastrow_parameters=dict(
 
 class Casino:
 
-    def __init__(self, dft=None, qmc_prev=None, qmc=None, job=None, psi=None, **kwargs):
+    def __init__(self, dft=None, qmc_prev=None, qmc='', job=None, psi=None, **kwargs):
 
         if dft is None:
             print "Previous DFT calculation must be provided"
@@ -127,7 +127,7 @@ class Casino:
             else:
                 self.rundir=self.dft.system.rundir + '/dmc'
         else:
-            raise ValueError, 'qmc can be either "vmc_opt" or "vmc_dmc" '
+            raise ValueError, 'qmc should be either "vmc_opt" or "vmc_dmc" '
 
         self.kwargs = kwargs
 
